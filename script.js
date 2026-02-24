@@ -32,7 +32,6 @@ async function fetchBTCPrice() {
 // Fetch every 10 seconds
 fetchBTCPrice();
 setInterval(fetchBTCPrice, 30000);
-
 function updateMaxBorrowDisplay() {
     // Max borrowable in BTC
     let maxBorrowBTC = 10; // change to your platform limit
