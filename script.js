@@ -73,7 +73,6 @@ function login(){
     }
 
     localStorage.setItem("currentUser", email);
-    // redirect to dashboard
     window.location.href = "dashboard.html";
 }
 
@@ -116,25 +115,31 @@ function copyWallet() {
 
 // ================= DEPOSIT =================
 function deposit(){
+    let currentEmail = localStorage.getItem("currentUser");
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let userIndex = users.findIndex(u => u.email === currentEmail);
+
     let input = parseFloat(document.getElementById("btcInput").value);
-    if(!input) return;
+    if(!input) return alert("Enter BTC amount");
 
     btcBalance += input;
     users[userIndex].btcBalance = btcBalance;
     localStorage.setItem("users", JSON.stringify(users));
+
     document.getElementById("btcBalance").innerText = btcBalance + " BTC";
 
     let eligible = (btcBalance * btcPrice) * 0.5;
-    document.getElementById("loanEligible").innerText = "$" + eligible;
-    users[userIndex].transactions = users[userIndex].transactions || [];
-users[userIndex].transactions.push({
-    type: "Deposit",
-    amount: input + " BTC",
-    date: new Date().toLocaleString()
-});
-localStorage.setItem("users", JSON.stringify(users));
+    const eligibleEl = document.getElementById("loanEligible");
+    if(eligibleEl) eligibleEl.innerText = "$" + eligible.toFixed(2);
 
-    // <-- PASTE TRANSACTION LOGGING HERE
+    // ✅ Log transaction
+    users[userIndex].transactions = users[userIndex].transactions || [];
+    users[userIndex].transactions.push({
+        type: "Deposit",
+        amount: input + " BTC",
+        date: new Date().toLocaleString()
+    });
+    localStorage.setItem("users", JSON.stringify(users));
 }
 
 // ================= LOAN =================
@@ -144,13 +149,6 @@ function calculateRequiredBTC(){
 
     requiredBTC = (requestedLoan / 0.5) / btcPrice;
     document.getElementById("requiredBTC").innerText = "Required Collateral: " + requiredBTC.toFixed(6) + " BTC";
-    users[userIndex].transactions = users[userIndex].transactions || [];
-users[userIndex].transactions.push({
-    type: "Loan Borrowed",
-    amount: requestedLoan + " USD",
-    date: new Date().toLocaleString()
-});
-localStorage.setItem("users", JSON.stringify(users));
 }
 
 function confirmLoan(){
@@ -165,6 +163,7 @@ function confirmLoan(){
     let currentEmail = localStorage.getItem("currentUser");
     let users = JSON.parse(localStorage.getItem("users")) || [];
     let userIndex = users.findIndex(u => u.email === currentEmail);
+
     users[userIndex].loan = loan;
     localStorage.setItem("users", JSON.stringify(users));
 
@@ -172,37 +171,41 @@ function confirmLoan(){
     startLoanTimer(duration);
     updateLTV();
     alert("Loan Approved! ✅");
+
+    // ✅ Log transaction
     users[userIndex].transactions = users[userIndex].transactions || [];
-users[userIndex].transactions.push({
-    type: "Loan Borrowed",
-    amount: requestedLoan + " USD",
-    date: new Date().toLocaleString()
-});
-localStorage.setItem("users", JSON.stringify(users));
+    users[userIndex].transactions.push({
+        type: "Loan Borrowed",
+        amount: requestedLoan + " USD",
+        date: new Date().toLocaleString()
+    });
+    localStorage.setItem("users", JSON.stringify(users));
 }
 
 // ================= REPAY =================
 function repayLoan(){
-    let repay = parseFloat(document.getElementById("repayAmount").value);
-    if(!repay || repay <= 0) return alert("Enter repayment amount");
-
     let currentEmail = localStorage.getItem("currentUser");
     let users = JSON.parse(localStorage.getItem("users")) || [];
     let userIndex = users.findIndex(u => u.email === currentEmail);
 
+    let repay = parseFloat(document.getElementById("repayAmount").value);
+    if(!repay || repay <= 0) return alert("Enter repayment amount");
+
     loan -= repay;
+
+    // ✅ Log every repayment
+    users[userIndex].transactions = users[userIndex].transactions || [];
+    users[userIndex].transactions.push({
+        type: "Loan Repaid",
+        amount: repay + " USD",
+        date: new Date().toLocaleString()
+    });
+
     if(loan <= 0){
         loan = 0;
         document.getElementById("loanTimer").innerText = "";
         localStorage.removeItem("loanEndTime");
         alert("Loan Fully Repaid! 🎉");
-        users[userIndex].transactions = users[userIndex].transactions || [];
-users[userIndex].transactions.push({
-    type: "Loan Repaid",
-    amount: repay + " USD",
-    date: new Date().toLocaleString()
-});
-localStorage.setItem("users", JSON.stringify(users));
     }
 
     users[userIndex].loan = loan;
