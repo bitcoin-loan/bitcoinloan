@@ -1,6 +1,6 @@
 // ================= SUPABASE CONFIG =================
 const SUPABASE_URL = "https://owulgpdukueqduvlurks.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93dWxncGR1a3VlcWR1dmx1cmtzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NTE1OTUsImV4cCI6MjA4NzUyNzU5NX0.kt3x5bZcUNiMiG4fhQV13p2QaxfGAyR5c5taYorputA";
+const SUPABASE_KEY = "sb_publishable_2RI-unk9wI_AIEOlSUsbtA_Rwk6Tqdk";
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ================= GLOBAL VARIABLES =================
