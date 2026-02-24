@@ -1,20 +1,8 @@
 // ================= SUPABASE CONFIG =================
 const SUPABASE_URL = "https://owulgpdukueqduvlurks.supabase.co";
 const SUPABASE_KEY = "sb_publishable_2RI-unk9wI_AIEOlSUsbtA_Rwk6Tqdk";
-
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-// ===== TEST CONNECTION =====
-async function testConnection() {
-    const { data, error } = await supabase.from("users").select("*");
 
-    if(error){
-        alert("Error connecting: " + error.message);
-    } else {
-        alert("Connection successful ✅");
-    }
-}
-
-testConnection();
 // ================= BTC PRICE =================
 let btcPrice = 40000; // fallback
 let btcBalance = 0;
@@ -22,256 +10,215 @@ let loan = 0;
 let requiredBTC = 0;
 let requestedLoan = 0;
 
-// Fetch BTC price from CoinGecko every 30s
+// Fetch BTC price from CoinGecko
 async function fetchBTCPrice() {
     try {
-        let response = await fetch(
+        const response = await fetch(
             "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
         );
-        let data = await response.json();
+        const data = await response.json();
         btcPrice = data.bitcoin.usd;
-    } catch (err) {
-        btcPrice = 40000; // fallback
+    } catch {
+        btcPrice = 40000;
     }
-
     const btcElement = document.getElementById("btcPrice");
-    if(btcElement){
-        btcElement.innerText = "BTC Price: $" + btcPrice.toLocaleString();
-    }
+    if(btcElement) btcElement.innerText = "BTC Price: $" + btcPrice.toLocaleString();
     updateLTV();
+    updateMaxBorrow();
 }
 setInterval(fetchBTCPrice, 30000);
 fetchBTCPrice();
 
 // ================= LOGIN & REGISTER =================
-function showRegister(){
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("registerBox").style.display = "block";
-}
-
 async function register() {
-    let email = document.getElementById("reg-email").value;
-    let password = document.getElementById("reg-password").value;
+    const email = document.getElementById("regEmail").value;
+    const password = document.getElementById("regPassword").value;
 
-    if (!email || !password) {
-        alert("Please fill all fields");
-        return;
-    }
+    if(!email || !password) return alert("Fill all fields");
 
     const { data, error } = await supabase
         .from("users")
-        .insert([
-            { email: email, password: password, btc_balance: 0 }
-        ]);
+        .insert([{ email, password, btc_balance: 0, loan: 0 }]);
 
-    if (error) {
-        alert("Registration failed: " + error.message);
-    } else {
-        alert("Registration successful ✅");
-        window.location.href = "login.html";
-    }
+    if(error) return alert("Registration failed: " + error.message);
+    alert("Registration successful ✅");
+    window.location.href = "index.html";
 }
 
-function login(){
-    let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
-    let users = JSON.parse(localStorage.getItem("users")) || [];
+async function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-    let user = users.find(u => u.email === email && u.password === password);
-    if(!user){
-        alert("Invalid login details");
-        return;
-    }
+    if(!email || !password) return alert("Enter email & password");
 
-    localStorage.setItem("currentUser", email);
+    const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("email", email)
+        .eq("password", password)
+        .single();
+
+    if(error || !data) return alert("Invalid login details");
+
+    localStorage.setItem("currentUser", JSON.stringify(data));
     window.location.href = "dashboard.html";
 }
 
-// ================= DASHBOARD DATA =================
-function loadDashboard(){
-    let currentEmail = localStorage.getItem("currentUser");
-    if(!currentEmail) {
-        window.location.href = "index.html";
-        return;
-    }
+// ================= DASHBOARD =================
+async function loadDashboard() {
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if(!currentUser) return window.location.href = "index.html";
 
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    let userIndex = users.findIndex(u => u.email === currentEmail);
-    if(userIndex < 0){
-        window.location.href = "index.html";
-        return;
-    }
+    // Get fresh data
+    const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("email", currentUser.email)
+        .single();
 
-    let currentUser = users[userIndex];
-    btcBalance = currentUser.btcBalance || 0;
-    loan = currentUser.loan || 0;
+    if(error || !data) return alert("Failed to load dashboard");
 
-    const balanceEl = document.getElementById("btcBalance");
-    if(balanceEl) balanceEl.innerText = btcBalance + " BTC";
+    btcBalance = data.btc_balance || 0;
+    loan = data.loan || 0;
 
-    const loanEl = document.getElementById("activeLoan");
-    if(loanEl) loanEl.innerText = "$" + loan.toFixed(2);
+    document.getElementById("btcBalance").innerText = btcBalance + " BTC";
+    document.getElementById("activeLoan").innerText = "$" + loan.toFixed(2);
 
     updateLTV();
+    updateMaxBorrow();
     startLoanTimerFromStorage();
 }
 
-// ================= WALLET =================
-function copyWallet() {
-    const copyText = document.getElementById("walletAddress");
-    copyText.select();
-    document.execCommand("copy");
-    alert("Wallet Address Copied!");
+// ================= MAX BORROWABLE =================
+function updateMaxBorrow() {
+    const maxBorrowBTC = btcBalance * 0.5; // 50% LTV
+    const maxBorrowEl = document.getElementById("maxBorrow");
+    if(maxBorrowEl) maxBorrowEl.innerText = maxBorrowBTC.toFixed(6) + " BTC";
 }
 
 // ================= DEPOSIT =================
-function deposit(){
-    let currentEmail = localStorage.getItem("currentUser");
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    let userIndex = users.findIndex(u => u.email === currentEmail);
-
+async function deposit() {
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     let input = parseFloat(document.getElementById("btcInput").value);
     if(!input) return alert("Enter BTC amount");
 
     btcBalance += input;
-    users[userIndex].btcBalance = btcBalance;
-    localStorage.setItem("users", JSON.stringify(users));
+
+    // Update Supabase
+    const { error } = await supabase
+        .from("users")
+        .update({ btc_balance: btcBalance })
+        .eq("email", currentUser.email);
+
+    if(error) return alert("Deposit failed: " + error.message);
 
     document.getElementById("btcBalance").innerText = btcBalance + " BTC";
-    function updateMaxBorrow() {
-    // Max borrowable = 50% of BTC collateral
-    let maxBorrowBTC = btcBalance * 0.5; // change 0.5 to your platform LTV
-    const maxBorrowEl = document.getElementById("maxBorrow");
-    if (maxBorrowEl) {
-        maxBorrowEl.innerText = maxBorrowBTC.toFixed(6) + " BTC";
-    }
-}
-    let eligible = (btcBalance * btcPrice) * 0.5;
-    const eligibleEl = document.getElementById("loanEligible");
-    if(eligibleEl) eligibleEl.innerText = "$" + eligible.toFixed(2);
-
-    // ✅ Log transaction
-    users[userIndex].transactions = users[userIndex].transactions || [];
-    users[userIndex].transactions.push({
-        type: "Deposit",
-        amount: input + " BTC",
-        date: new Date().toLocaleString()
-    });
-    localStorage.setItem("users", JSON.stringify(users));
+    updateMaxBorrow();
 }
 
 // ================= LOAN =================
-function calculateRequiredBTC(){
+function calculateRequiredBTC() {
     requestedLoan = parseFloat(document.getElementById("loanRequest").value);
     if(!requestedLoan || requestedLoan <= 0) return alert("Enter loan amount");
 
     requiredBTC = (requestedLoan / 0.5) / btcPrice;
-    document.getElementById("requiredBTC").innerText = "Required Collateral: " + requiredBTC.toFixed(6) + " BTC";
+    document.getElementById("requiredBTC").innerText =
+        "Required Collateral: " + requiredBTC.toFixed(6) + " BTC";
 }
 
-function confirmLoan(){
+async function confirmLoan() {
     if(!requestedLoan || requestedLoan <= 0) return alert("Enter loan amount first");
-    if(btcBalance < requiredBTC) return alert("Insufficient BTC collateral. Deposit more BTC.");
+    if(btcBalance < requiredBTC) return alert("Insufficient BTC collateral");
 
-    let duration = parseInt(document.getElementById("loanDuration").value);
-    let interestRate = duration === 7 ? 0.05 : duration === 14 ? 0.08 : 0.12;
+    const duration = parseInt(document.getElementById("loanDuration").value);
+    const interestRate = duration === 7 ? 0.05 : duration === 14 ? 0.08 : 0.12;
 
     loan = requestedLoan + (requestedLoan * interestRate);
 
-    let currentEmail = localStorage.getItem("currentUser");
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    let userIndex = users.findIndex(u => u.email === currentEmail);
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-    users[userIndex].loan = loan;
-    localStorage.setItem("users", JSON.stringify(users));
+    const { error } = await supabase
+        .from("users")
+        .update({ loan })
+        .eq("email", currentUser.email);
+
+    if(error) return alert("Loan approval failed");
 
     document.getElementById("activeLoan").innerText = "$" + loan.toFixed(2);
     startLoanTimer(duration);
     updateLTV();
-    alert("Loan Approved! ✅");
-
-    // ✅ Log transaction
-    users[userIndex].transactions = users[userIndex].transactions || [];
-    users[userIndex].transactions.push({
-        type: "Loan Borrowed",
-        amount: requestedLoan + " USD",
-        date: new Date().toLocaleString()
-    });
-    localStorage.setItem("users", JSON.stringify(users));
+    updateMaxBorrow();
+    alert("Loan Approved ✅");
 }
 
 // ================= REPAY =================
-function repayLoan(){
-    let currentEmail = localStorage.getItem("currentUser");
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    let userIndex = users.findIndex(u => u.email === currentEmail);
-
+async function repayLoan() {
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     let repay = parseFloat(document.getElementById("repayAmount").value);
     if(!repay || repay <= 0) return alert("Enter repayment amount");
 
     loan -= repay;
+    if(loan < 0) loan = 0;
 
-    // ✅ Log every repayment
-    users[userIndex].transactions = users[userIndex].transactions || [];
-    users[userIndex].transactions.push({
-        type: "Loan Repaid",
-        amount: repay + " USD",
-        date: new Date().toLocaleString()
-    });
+    const { error } = await supabase
+        .from("users")
+        .update({ loan })
+        .eq("email", currentUser.email);
 
-    if(loan <= 0){
-        loan = 0;
-        document.getElementById("loanTimer").innerText = "";
-        localStorage.removeItem("loanEndTime");
-        alert("Loan Fully Repaid! 🎉");
-    }
+    if(error) return alert("Repayment failed");
 
-    users[userIndex].loan = loan;
-    localStorage.setItem("users", JSON.stringify(users));
     document.getElementById("activeLoan").innerText = "$" + loan.toFixed(2);
     updateLTV();
+    updateMaxBorrow();
+
+    if(loan === 0){
+        localStorage.removeItem("loanEndTime");
+        document.getElementById("loanTimer").innerText = "";
+        alert("Loan Fully Repaid 🎉");
+    }
 }
 
 // ================= LTV =================
-function updateLTV(){
-    if(!btcBalance || btcBalance <=0){
+function updateLTV() {
+    if(!btcBalance || btcBalance <= 0){
         document.getElementById("ltvPercent").innerText = "0%";
         document.getElementById("ltvWarning").innerText = "";
         return;
     }
-    let ltv = (loan / (btcBalance * btcPrice)) * 100;
+
+    const ltv = (loan / (btcBalance * btcPrice)) * 100;
     document.getElementById("ltvPercent").innerText = ltv.toFixed(2) + "%";
-    document.getElementById("ltvWarning").innerText = ltv > 70 ? "⚠ High Risk: Add BTC or repay loan!" : "";
+    document.getElementById("ltvWarning").innerText = ltv > 70 ? "⚠ High Risk!" : "";
 }
+
 // ================= LOAN TIMER =================
 function startLoanTimer(durationDays){
-    let now = new Date().getTime();
-    let loanEndTime = now + durationDays * 24*60*60*1000;
+    const now = new Date().getTime();
+    const loanEndTime = now + durationDays*24*60*60*1000;
     localStorage.setItem("loanEndTime", loanEndTime);
     updateTimer();
     setInterval(updateTimer, 60000);
 }
 
 function startLoanTimerFromStorage(){
-    let loanEndTime = parseInt(localStorage.getItem("loanEndTime"));
-    if(!loanEndTime) return;
-    updateTimer();
-    setInterval(updateTimer, 60000);
+    if(localStorage.getItem("loanEndTime")){
+        updateTimer();
+        setInterval(updateTimer, 60000);
+    }
 }
 
 function updateTimer(){
-    let loanEndTime = parseInt(localStorage.getItem("loanEndTime"));
+    const loanEndTime = parseInt(localStorage.getItem("loanEndTime"));
     if(!loanEndTime) return;
 
-    let now = new Date().getTime();
-    let distance = loanEndTime - now;
+    const distance = loanEndTime - new Date().getTime();
     if(distance <= 0){
         document.getElementById("loanTimer").innerText = "Loan Expired!";
         return;
     }
 
-    let days = Math.floor(distance / (1000*60*60*24));
-    let hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
+    const days = Math.floor(distance / (1000*60*60*24));
+    const hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
     document.getElementById("loanTimer").innerText = `Time Remaining: ${days}d ${hours}h`;
 }
 
