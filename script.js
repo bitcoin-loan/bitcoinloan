@@ -1,7 +1,10 @@
 // ================= SUPABASE CONFIG =================
 const SUPABASE_URL = "https://owulgpdukueqduvlurks.supabase.co";
 const SUPABASE_KEY = "sb_publishable_2RI-unk9wI_AIEOlSUsbtA_Rwk6Tqdk";
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// IMPORTANT FIX
+const { createClient } = window.supabase;
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ================= GLOBAL VARIABLES =================
 let btcPrice = 40000; // fallback BTC price
