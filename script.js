@@ -117,19 +117,17 @@ function copyWallet() {
 // ================= DEPOSIT =================
 function deposit(){
     let input = parseFloat(document.getElementById("btcInput").value);
-    if(!input || input <= 0) return alert("Enter valid BTC amount");
-
-    let currentEmail = localStorage.getItem("currentUser");
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    let userIndex = users.findIndex(u => u.email === currentEmail);
+    if(!input) return;
 
     btcBalance += input;
     users[userIndex].btcBalance = btcBalance;
     localStorage.setItem("users", JSON.stringify(users));
-
     document.getElementById("btcBalance").innerText = btcBalance + " BTC";
-    updateLTV();
-    alert("BTC Deposited Successfully!");
+
+    let eligible = (btcBalance * btcPrice) * 0.5;
+    document.getElementById("loanEligible").innerText = "$" + eligible;
+
+    // <-- PASTE TRANSACTION LOGGING HERE
 }
 
 // ================= LOAN =================
