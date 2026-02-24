@@ -39,9 +39,9 @@ function updateMaxBorrowDisplay() {
     // USD approximation
     let maxBorrowUSD = maxBorrowBTC * btcPrice;
 
-    const maxBorrowEl = document.getElementById("maxBojeksrow");
-    if(maxBorrowEl){
-        maxBorrowEl.innerText = `You can borrow up to ${maxBorrowBTC} BTC ~ $${maxBorrowUSD.toLocaleString()}`;
+    const maxBordrowEl = document.getElementById("maxBojeksrow");
+    if(maxBorbrowEl){
+        maxBorarowEl.innerText = `You can borrow up to ${maxBocrrowBTC} BTC ~ $${maxBorrowUSD.toLocaleString()}`;
     }
 }
 
