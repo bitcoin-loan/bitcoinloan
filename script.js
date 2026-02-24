@@ -138,16 +138,14 @@ function deposit(){
     localStorage.setItem("users", JSON.stringify(users));
 
     document.getElementById("btcBalance").innerText = btcBalance + " BTC";
-    function updateMaxBorrowBanner(){
-    let maxBorrowBTC = btcBalance * 0.5; // 50% LTV
-    let maxBorrowUSD = maxBorrowBTC * btcPrice;
-
-    const bannerEl = document.getElementById("maxBorrowBanner");
-    if(bannerEl){
-        bannerEl.innerText = `You can borrow up to ${maxBorrowBTC.toFixed(6)} BTC (~$${maxBorrowUSD.toLocaleString()})`;
+    function updateMaxBorrow() {
+    // Max borrowable = 50% of BTC collateral
+    let maxBorrowBTC = btcBalance * 0.5; // change 0.5 to your platform LTV
+    const maxBorrowEl = document.getElementById("maxBorrow");
+    if (maxBorrowEl) {
+        maxBorrowEl.innerText = maxBorrowBTC.toFixed(6) + " BTC";
     }
-    }
-
+}
     let eligible = (btcBalance * btcPrice) * 0.5;
     const eligibleEl = document.getElementById("loanEligible");
     if(eligibleEl) eligibleEl.innerText = "$" + eligible.toFixed(2);
