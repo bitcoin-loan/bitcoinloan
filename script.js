@@ -49,33 +49,27 @@ function showRegister(){
     document.getElementById("registerBox").style.display = "block";
 }
 
-function register(){
-    let name = document.getElementById("regName").value;
-    let email = document.getElementById("regEmail").value;
-    let password = document.getElementById("regPassword").value;
+async function register() {
+    let email = document.getElementById("reg-email").value;
+    let password = document.getElementById("reg-password").value;
 
-    if(!name || !email || !password){
-        alert("Fill all fields");
+    if (!email || !password) {
+        alert("Please fill all fields");
         return;
     }
 
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    if(users.find(u => u.email === email)){
-        alert("User already exists");
-        return;
+    const { data, error } = await supabase
+        .from("users")
+        .insert([
+            { email: email, password: password, btc_balance: 0 }
+        ]);
+
+    if (error) {
+        alert("Registration failed: " + error.message);
+    } else {
+        alert("Registration successful ✅");
+        window.location.href = "login.html";
     }
-
-    users.push({
-        name, email, password,
-        btcBalance: 0,
-        loan: 0,
-        transactions: []
-    });
-
-    localStorage.setItem("users", JSON.stringify(users));
-    alert("Account created successfully!");
-    document.getElementById("registerBox").style.display = "none";
-    document.getElementById("loginBox").style.display = "block";
 }
 
 function login(){
