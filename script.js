@@ -233,13 +233,15 @@ function repayLoan(){
 }
 
 // ================= LTV =================
-function updateMaxBorrow() {
-    // Max borrowable = 50% of BTC collateral
-    let maxBorrowBTC = btcBalance * 0.5; // change 0.5 to your platform LTV
-    const maxBorrowEl = document.getElementById("maxBorrow");
-    if (maxBorrowEl) {
-        maxBorrowEl.innerText = maxBorrowBTC.toFixed(6) + " BTC";
+function updateLTV(){
+    if(!btcBalance || btcBalance <=0){
+        document.getElementById("ltvPercent").innerText = "0%";
+        document.getElementById("ltvWarning").innerText = "";
+        return;
     }
+    let ltv = (loan / (btcBalance * btcPrice)) * 100;
+    document.getElementById("ltvPercent").innerText = ltv.toFixed(2) + "%";
+    document.getElementById("ltvWarning").innerText = ltv > 70 ? "⚠ High Risk: Add BTC or repay loan!" : "";
 }
 // ================= LOAN TIMER =================
 function startLoanTimer(durationDays){
