@@ -28,8 +28,6 @@ async function fetchBTCPrice() {
     updateMaxBorrow();
     updateLTV();
 }
-
-// Fetch every 10 seconds
 fetchBTCPrice();
 setInterval(fetchBTCPrice, 30000);
 
