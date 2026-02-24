@@ -3,78 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BitVault Dashboard</title>
+<title>BitVault - Dashboard</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="script.js" defer></script>
 </head>
 <body>
 
-<!-- ================= SIDEBAR ================= -->
-<aside class="sidebar">
-    <div class="logo">BitVault</div>
-    <ul>
-        <li onclick="window.location.href='dashboard.html'" class="active">Dashboard</li>
-        <li onclick="window.location.href='transactions.html'">Transactions</li>
-        <li onclick="window.location.href='loans.html'">Loans</li>
-        <li onclick="window.location.href='collateral.html'">Collateral</li>
-        <li onclick="toggleTheme()">Toggle Theme</li>
-        <li onclick="logout()">Logout</li>
-    </ul>
-</aside>
+<div class="layout">
+    <aside class="sidebar">
+        <h2>₿ BitVault</h2>
+        <ul>
+            <li onclick="window.location.href='transactions.html'">Transactions</li>
+            <li class="active">Dashboard</li>
+            <li onclick="logout()">Logout</li>
+            <li onclick="toggleTheme()">Toggle Theme</li>
+        </ul>
+    </aside>
 
-<!-- ================= MAIN CONTENT ================= -->
-<main class="main-content">
-    <div class="top-bar">
-        <h1>Dashboard</h1>
-        <div id="btcPrice">Loading BTC price...</div>
-    </div>
+    <main class="main-content">
+        <div class="top-bar">
+            <h1>Dashboard</h1>
+            <div class="price" id="btcPrice">Loading BTC Price...</div>
+        </div>
 
-    <!-- Maximum Borrowable Card -->
-    <div class="premium-card" style="text-align:center;">
-        <h3>Maximum Borrowable</h3>
-        <p id="maxBorrow">0 BTC</p>
-        <small>(50% of your BTC collateral)</small>
-    </div>
+        <div class="premium-card">
+            <h3>Max Borrowable</h3>
+            <p id="maxBorrow">0 BTC (~$0)</p>
+        </div>
 
-    <!-- Wallet & Balance -->
-    <div class="premium-card">
-        <h3>Your BTC Balance</h3>
-        <p id="btcBalance">0 BTC</p>
-        <input type="number" id="btcInput" placeholder="Deposit BTC" step="0.000001">
-        <button class="primary-btn" onclick="deposit()">Deposit</button>
-    </div>
+        <div class="premium-card">
+            <h3>BTC Balance</h3>
+            <p id="btcBalance">0 BTC</p>
+            <input type="number" id="btcInput" placeholder="Deposit BTC">
+            <button class="primary-btn" onclick="deposit()">Deposit</button>
+        </div>
 
-    <!-- Loan Section -->
-    <div class="premium-card">
-        <h3>Borrow Bitcoin</h3>
-        <input type="number" id="loanRequest" placeholder="Loan Amount in USD">
-        <select id="loanDuration">
-            <option value="7">7 Days</option>
-            <option value="14">14 Days</option>
-            <option value="30">30 Days</option>
-        </select>
-        <p id="requiredBTC">Required Collateral: 0 BTC</p>
-        <button class="primary-btn" onclick="calculateRequiredBTC()">Calculate BTC</button>
-        <button class="primary-btn" onclick="confirmLoan()">Borrow</button>
-        <p>Active Loan: <span id="activeLoan">$0.00</span></p>
-        <p id="loanTimer"></p>
-    </div>
+        <div class="premium-card">
+            <h3>Borrow Funds</h3>
+            <input type="number" id="loanRequest" placeholder="Loan amount in USD">
+            <p id="requiredBTC">Required Collateral: 0 BTC</p>
+            <select id="loanDuration">
+                <option value="7">7 Days (5%)</option>
+                <option value="14">14 Days (8%)</option>
+                <option value="30">30 Days (12%)</option>
+            </select>
+            <button class="primary-btn" onclick="calculateRequiredBTC()">Calculate Collateral</button>
+            <button class="primary-btn" onclick="confirmLoan()">Confirm Loan</button>
+        </div>
 
-    <!-- Repay Section -->
-    <div class="premium-card">
-        <h3>Repay Loan</h3>
-        <input type="number" id="repayAmount" placeholder="Repayment Amount in USD">
-        <button class="primary-btn" onclick="repayLoan()">Repay</button>
-    </div>
+        <div class="premium-card">
+            <h3>Active Loan</h3>
+            <p id="activeLoan">$0</p>
+            <p id="ltvPercent">0%</p>
+            <p id="ltvWarning" style="color:red;"></p>
+            <p id="loanTimer"></p>
+            <input type="number" id="repayAmount" placeholder="Repayment amount">
+            <button class="primary-btn" onclick="repayLoan()">Repay Loan</button>
+        </div>
 
-    <!-- LTV Section -->
-    <div class="premium-card">
-        <h3>Loan to Value (LTV)</h3>
-        <p id="ltvPercent">0%</p>
-        <p id="ltvWarning"></p>
-    </div>
-</main>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script src="dashboard.js"></script>
+    </main>
+</div>
 </body>
 </html>
