@@ -1,4 +1,4 @@
-/* ================= GENERAL ================= */
+/* ================= GLOBAL ================= */
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
@@ -6,13 +6,17 @@ body {
     color: white;
 }
 
-/* ================= LOGIN/REGISTER ================= */
+.light-mode {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+/* ================= AUTH (LOGIN / REGISTER) ================= */
 .auth-wrapper {
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px;
 }
 
 .auth-card {
@@ -20,27 +24,21 @@ body {
     backdrop-filter: blur(20px);
     padding: 40px;
     border-radius: 16px;
-    width: 100%;
-    max-width: 380px;
+    width: 350px;
     text-align: center;
     box-shadow: 0 0 40px rgba(0,0,0,0.4);
-    transition: transform 0.3s ease;
-}
-
-.auth-card:hover {
-    transform: translateY(-5px);
 }
 
 .logo {
-    font-size: 32px;
-    color: #f7931a;
+    font-size: 28px;
     font-weight: bold;
-    margin-bottom: 20px;
+    color: #f7931a;
 }
 
-.auth-card h2 {
+.subtitle {
+    font-size: 14px;
+    opacity: 0.7;
     margin-bottom: 20px;
-    font-size: 22px;
 }
 
 input {
@@ -51,34 +49,25 @@ input {
     border: none;
     background: #1e293b;
     color: white;
-    font-size: 16px;
 }
 
 .primary-btn {
     width: 100%;
     padding: 12px;
-    margin: 10px 0;
     border-radius: 8px;
     border: none;
     background: linear-gradient(90deg, #f7931a, #ffae42);
     color: black;
     font-weight: bold;
     cursor: pointer;
-    font-size: 16px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s;
 }
 
 .primary-btn:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 15px #f7931a;
 }
 
-p {
-    font-size: 14px;
-    opacity: 0.8;
-}
-
-/* ================= DASHBOARD ================= */
+/* ================= DASHBOARD LAYOUT ================= */
 .layout {
     display: flex;
     min-height: 100vh;
@@ -87,27 +76,31 @@ p {
 .sidebar {
     width: 220px;
     background: #111827;
-    height: 100vh;
     padding: 20px;
-    flex-shrink: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar h2 {
     color: #f7931a;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     font-size: 24px;
+    text-align: center;
 }
 
 .sidebar ul {
     list-style: none;
     padding: 0;
+    margin: 0;
+    flex: 1;
 }
 
 .sidebar li {
     padding: 12px 0;
     cursor: pointer;
-    opacity: 0.8;
-    transition: 0.3s;
+    opacity: 0.7;
+    transition: opacity 0.2s, color 0.2s;
 }
 
 .sidebar li.active,
@@ -116,20 +109,30 @@ p {
     color: #f7931a;
 }
 
+/* ================= MAIN CONTENT ================= */
 .main-content {
     flex: 1;
     padding: 30px;
-    background: #0f172a;
-    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .top-bar {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 30px;
-    flex-wrap: wrap;
 }
 
+.top-bar h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+#btcPrice {
+    font-weight: bold;
+}
+
+/* ================= CARDS ================= */
 .cards {
     display: flex;
     gap: 20px;
@@ -143,12 +146,16 @@ p {
     border-radius: 16px;
     width: 280px;
     box-shadow: 0 0 20px rgba(0,0,0,0.4);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .premium-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 0 25px rgba(247,147,26,0.5);
+}
+
+.premium-card h3 {
+    margin-top: 0;
 }
 
 select {
@@ -159,19 +166,63 @@ select {
     color: white;
     border: none;
     margin-bottom: 10px;
-    font-size: 16px;
 }
 
-.light-mode {
-    background: #f3f4f6;
-    color: black;
+/* ================= INPUTS & BUTTONS ================= */
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: #1e293b;
+    color: white;
+    margin-bottom: 10px;
 }
 
-.light-mode .sidebar {
-    background: #e5e7eb;
+/* ================= WARNINGS ================= */
+#ltvWarning {
+    font-weight: bold;
+    color: #ff4d4d;
 }
 
-.light-mode .premium-card {
-    background: rgba(255,255,255,0.1);
-    color: black;
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+    .layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 10px 0;
+    }
+
+    .sidebar ul {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .cards {
+        justify-content: center;
+    }
+
+    .premium-card {
+        width: 90%;
+    }
+
+    .top-bar {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* ================= SPECIAL ELEMENTS ================= */
+#maxBorrow {
+    font-weight: bold;
+    color: #f7931a;
+    margin-bottom: 10px;
+    display: block;
 }
