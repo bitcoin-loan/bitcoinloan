@@ -5,46 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BitVault - Login/Register</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="script.js" defer></script>
 </head>
 <body>
 
 <div class="auth-wrapper">
-    <div class="auth-card">
+    <div class="auth-card" id="loginBox">
         <div class="logo">₿ BitVault</div>
+        <h2>Login to Your Account</h2>
+        <input type="email" id="email" placeholder="Email address">
+        <input type="password" id="password" placeholder="Password">
+        <button class="primary-btn" onclick="login()">Login</button>
+        <p onclick="showRegister()" style="cursor:pointer; color:#f7931a; margin-top:10px;">
+            Don't have an account? Register
+        </p>
+    </div>
 
-        <!-- ================= LOGIN ================= -->
-        <div id="loginBox">
-            <h2>Login</h2>
-            <input type="email" id="email" placeholder="Email address">
-            <input type="password" id="password" placeholder="Password">
-            <button class="primary-btn" onclick="login()">Login</button>
-            <p style="cursor:pointer; color:#f7931a;" onclick="showRegister()">Don't have an account? Register</p>
-        </div>
-
-        <!-- ================= REGISTER ================= -->
-        <div id="registerBox" style="display:none;">
-            <h2>Register</h2>
-            <input type="email" id="reg-email" placeholder="Email address">
-            <input type="password" id="reg-password" placeholder="Password">
-            <button class="primary-btn" onclick="register()">Create Account</button>
-            <p style="cursor:pointer; color:#f7931a;" onclick="showLogin()">Already have an account? Login</p>
-        </div>
-
+    <div class="auth-card" id="registerBox" style="display:none;">
+        <div class="logo">₿ BitVault</div>
+        <h2>Create Account</h2>
+        <input type="email" id="regEmail" placeholder="Email address">
+        <input type="password" id="regPassword" placeholder="Password">
+        <button class="primary-btn" onclick="register()">Register</button>
+        <p onclick="showLogin()" style="cursor:pointer; color:#f7931a; margin-top:10px;">
+            Already have an account? Login
+        </p>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script src="auth.js"></script>
-<script>
-function showLogin(){
-    document.getElementById("loginBox").style.display = "block";
-    document.getElementById("registerBox").style.display = "none";
-}
-function showRegister(){
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("registerBox").style.display = "block";
-}
-</script>
 
 </body>
 </html>
