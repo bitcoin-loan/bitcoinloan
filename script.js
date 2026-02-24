@@ -126,6 +126,13 @@ function deposit(){
 
     let eligible = (btcBalance * btcPrice) * 0.5;
     document.getElementById("loanEligible").innerText = "$" + eligible;
+    users[userIndex].transactions = users[userIndex].transactions || [];
+users[userIndex].transactions.push({
+    type: "Deposit",
+    amount: input + " BTC",
+    date: new Date().toLocaleString()
+});
+localStorage.setItem("users", JSON.stringify(users));
 
     // <-- PASTE TRANSACTION LOGGING HERE
 }
@@ -137,6 +144,13 @@ function calculateRequiredBTC(){
 
     requiredBTC = (requestedLoan / 0.5) / btcPrice;
     document.getElementById("requiredBTC").innerText = "Required Collateral: " + requiredBTC.toFixed(6) + " BTC";
+    users[userIndex].transactions = users[userIndex].transactions || [];
+users[userIndex].transactions.push({
+    type: "Loan Borrowed",
+    amount: requestedLoan + " USD",
+    date: new Date().toLocaleString()
+});
+localStorage.setItem("users", JSON.stringify(users));
 }
 
 function confirmLoan(){
@@ -158,6 +172,13 @@ function confirmLoan(){
     startLoanTimer(duration);
     updateLTV();
     alert("Loan Approved! ✅");
+    users[userIndex].transactions = users[userIndex].transactions || [];
+users[userIndex].transactions.push({
+    type: "Loan Borrowed",
+    amount: requestedLoan + " USD",
+    date: new Date().toLocaleString()
+});
+localStorage.setItem("users", JSON.stringify(users));
 }
 
 // ================= REPAY =================
@@ -175,6 +196,13 @@ function repayLoan(){
         document.getElementById("loanTimer").innerText = "";
         localStorage.removeItem("loanEndTime");
         alert("Loan Fully Repaid! 🎉");
+        users[userIndex].transactions = users[userIndex].transactions || [];
+users[userIndex].transactions.push({
+    type: "Loan Repaid",
+    amount: repay + " USD",
+    date: new Date().toLocaleString()
+});
+localStorage.setItem("users", JSON.stringify(users));
     }
 
     users[userIndex].loan = loan;
