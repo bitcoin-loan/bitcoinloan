@@ -1,3 +1,8 @@
+// ================= SUPABASE CONFIG =================
+const SUPABASE_URL = "PASTE_YOUR_PROJECT_URL_HERE";
+const SUPABASE_KEY = "PASTE_YOUR_ANON_KEY_HERE";
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // ================= BTC PRICE =================
 let btcPrice = 40000; // fallback
 let btcBalance = 0;
