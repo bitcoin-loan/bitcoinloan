@@ -11,27 +11,31 @@
 <body>
 
 <div class="auth-wrapper">
+
+    <!-- LOGIN CARD -->
     <div class="auth-card" id="loginBox">
         <div class="logo">₿ BitVault</div>
-        <h2>Login to Your Account</h2>
-        <input type="email" id="email" placeholder="Email address">
+        <h2>Login</h2>
+        <input type="email" id="email" placeholder="Email">
         <input type="password" id="password" placeholder="Password">
         <button class="primary-btn" onclick="login()">Login</button>
-        <p onclick="showRegister()" style="cursor:pointer; color:#f7931a; margin-top:10px;">
+        <p style="margin-top:10px; cursor:pointer; color:#f7931a;" onclick="showRegister()">
             Don't have an account? Register
         </p>
     </div>
 
+    <!-- REGISTER CARD -->
     <div class="auth-card" id="registerBox" style="display:none;">
         <div class="logo">₿ BitVault</div>
-        <h2>Create Account</h2>
-        <input type="email" id="regEmail" placeholder="Email address">
+        <h2>Register</h2>
+        <input type="email" id="regEmail" placeholder="Email">
         <input type="password" id="regPassword" placeholder="Password">
         <button class="primary-btn" onclick="register()">Register</button>
-        <p onclick="showLogin()" style="cursor:pointer; color:#f7931a; margin-top:10px;">
+        <p style="margin-top:10px; cursor:pointer; color:#f7931a;" onclick="showLogin()">
             Already have an account? Login
         </p>
     </div>
+
 </div>
 
 </body>
