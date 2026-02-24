@@ -1,6 +1,6 @@
 // ================= SUPABASE CONFIG =================
-const SUPABASE_URL = "PASTE_YOUR_PROJECT_URL_HERE";
-const SUPABASE_KEY = "PASTE_YOUR_ANON_KEY_HERE";
+const SUPABASE_URL = "https://owulgpdukueqduvlurks.supabase.co";
+const SUPABASE_KEY = "sb_publishable_2RI-unk9wI_AIEOlSUsbtA_Rwk6Tqdk";
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // ================= BTC PRICE =================
