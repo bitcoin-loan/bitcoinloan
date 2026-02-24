@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - BitVault</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <h2>₿ BitVault</h2>
+        <ul>
+            <li onclick="window.location.href='transactions.html'">
+Transactions
+</li>
+            <li class="active">Dashboard</li>
+            <li>Loans</li>
+            <li>Collateral</li>
+            <li onclick="toggleTheme()">Toggle Theme</li>
+            <li onclick="logout()">Logout</li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+
+        <div class="top-bar">
+            <h1>Dashboard</h1>
+            <div class="price" id="btcPrice">Loading price...</div>
+        </div>
+<div class="premium-card">
+    <h3>Loan To Value (LTV)</h3>
+    <p id="ltvPercent">0%</p>
+</div>
+
+<div class="premium-card">
+    <h3>Total Collateral Value</h3>
+    <p id="collateralValue">$0</p>
+</div>
+        <div class="cards">
+
+            <div class="premium-card">
+                <h3>Bitcoin Collateral</h3>
+                <p id="btcBalance">0 BTC</p>
+                <input type="number" id="btcInput" placeholder="Deposit BTC">
+                <button onclick="deposit()" class="primary-btn">Deposit</button>
+                
+            </div>
+               <p>Deposit BTC to:</p>
+<input type="text" value="bc1qu9d6lv4rvkdkh34t8kk4ge0egc7r2m954tc2jq" id="walletAddress" readonly>
+
+<button onclick="copyWallet()" class="primary-btn">
+Copy Address
+</button>
+</button>
+<h3>Borrow Funds</h3>
+
+<input type="number" id="loanRequest" placeholder="Enter loan amount in USD">
+
+<p id="requiredBTC"></p>
+
+<select id="loanDuration">
+    <option value="7">7 Days (5%)</option>
+    <option value="14">14 Days (8%)</option>
+    <option value="30">30 Days (12%)</option>
+</select>
+
+<button onclick="calculateRequiredBTC()" class="primary-btn">
+Calculate Collateral
+</button>
+
+<button onclick="confirmLoan()" class="primary-btn">
+Confirm Loan
+</button>
+   
+            <div class="premium-card">
+                <h3>Active Loan</h3>
+               <p id="ltvWarning" style="color:red;"></p>
+            </div>
+            <p id="loanTimer"></p>
+            <input type="number" id="repayAmount" placeholder="Enter repayment amount">
+<button onclick="repayLoan()" class="primary-btn">Repay Loan</button>
+        </div>
+
+    </main>
+
+</div>
+<script src="script.js"></script>
+<script>
+    let requiredBTC = 0;
+let requestedLoan = 0;
+
+function calculateRequiredBTC(){
+
+    requestedLoan = parseFloat(document.getElementById("loanRequest").value);
+
+    if(!requestedLoan || requestedLoan <= 0){
+        alert("Enter loan amount");
+        return;
+    }
+
+    // 50% LTV → must deposit 200% value
+    requiredBTC = (requestedLoan / 0.5) / btcPrice;
+
+    document.getElementById("requiredBTC").innerText =
+    "Required Collateral: " + requiredBTC.toFixed(6) + " BTC";
+}
+    function repayLoan(){
+
+    let repay = parseFloat(document.getElementById("repayAmount").value);
+    if(!repay || repay <= 0) return;
+
+    loan -= repay;
+
+    if(loan <= 0){
+        loan = 0;
+        localStorage.removeItem("loanEndTime");
+        document.getElementById("loanTimer").innerText = "";
+        alert("Loan Fully Repaid 🎉");
+    }
+
+    localStorage.setItem("loan", loan);
+    document.getElementById("activeLoan").innerText = "$" + loan.toFixed(2);
+
+    checkLiquidation();
+}
+    let loanEndTime = localStorage.getItem("loanEndTime");
+
+function startLoanTimer(durationDays){
+    let now = new Date().getTime();
+    loanEndTime = now + (durationDays * 24 * 60 * 60 * 1000);
+    localStorage.setItem("loanEndTime", loanEndTime);
+    updateTimer();
+}
+
+function updateTimer(){
+    if(!loanEndTime) return;
+
+    let now = new Date().getTime();
+    let distance = loanEndTime - now;
+
+    if(distance <= 0){
+        document.getElementById("loanTimer").innerText = "Loan Expired!";
+        return;
+    }
+
+    let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    let hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
+
+    document.getElementById("loanTimer").innerText =
+    "Time Remaining: " + days + "d " + hours + "h";
+}
+
+let users = JSON.parse(localStorage.getItem("users")) || [];
+let currentEmail = localStorage.getItem("currentUser");
+
+let userIndex = users.findIndex(u => u.email === currentEmail);
+let currentUser = users[userIndex];
+
+let btcBalance = currentUser.btcBalance || 0;
+let loan = currentUser.loan || 0;
+
+document.getElementById("btcBalance").innerText = btcBalance + " BTC";
+document.getElementById("activeLoan").innerText = "$" + loan;
+
+function deposit(){
+    let input = parseFloat(document.getElementById("btcInput").value);
+    if(!input) return;
+
+    btcBalance += input;
+    users[userIndex].btcBalance = btcBalance;
+localStorage.setItem("users", JSON.stringify(users));
+    localStorage.setItem("btcBalance", btcBalance);
+    document.getElementById("btcBalance").innerText = btcBalance + " BTC";
+
+    let eligible = (btcBalance * 40000) * 0.5;
+    document.getElementById("loanEligible").innerText = "$" + eligible;
+}
+
+function applyLoan(){
+
+    let duration = document.getElementById("loanDuration").value;
+
+    let baseLoan = (btcBalance * btcPrice) * 0.5;
+
+    let interestRate = 0;
+
+    if(duration == 7) interestRate = 0.05;
+    if(duration == 14) interestRate = 0.08;
+    if(duration == 30) interestRate = 0.12;
+
+    let totalLoan = baseLoan + (baseLoan * interestRate);
+
+    loan = totalLoan;
+    users[userIndex].loan = loan;
+localStorage.setItem("users", JSON.stringify(users));
+    startLoanTimer(duration);
+
+    localStorage.setItem("loan", loan);
+
+    document.getElementById("activeLoan").innerText = "$" + totalLoan.toFixed(2);
+
+    checkLiquidation();
+}
+    function checkLiquidation(){
+
+    if(btcBalance === 0) return;
+
+    let ltv = (loan / (btcBalance * btcPrice)) * 100;
+document.getElementById("ltvPercent").innerText =
+ltv.toFixed(2) + "%";
+    if(ltv > 70){
+        document.getElementById("ltvWarning").innerText =
+        "⚠ High Risk: Add more BTC or repay your loan!";
+    } else {
+        document.getElementById("ltvWarning").innerText = "";
+    }
+}
+    let loanEndTime = localStorage.getItem("loanEndTime");
+
+function startLoanTimer(durationDays){
+    let now = new Date().getTime();
+    loanEndTime = now + (durationDays * 24 * 60 * 60 * 1000);
+    localStorage.setItem("loanEndTime", loanEndTime);
+    updateTimer();
+}
+
+function updateTimer(){
+    if(!loanEndTime) return;
+
+    let now = new Date().getTime();
+    let distance = loanEndTime - now;
+
+    if(distance <= 0){
+        document.getElementById("loanTimer").innerText = "Loan Expired!";
+        return;
+    }
+
+    let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    let hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
+    document.getElementById("loanTimer").innerText =
+    "Time Remaining: " + days + "d " + hours + "h";
+}
+
+
+</script>
+
+</body>
+</html>

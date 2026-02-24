@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="style.css">
+<title>Transactions</title>
+</head>
+<body>
+
+<div class="main-content">
+<h1>Transaction History</h1>
+<div id="transactionList"></div>
+</div>
+
+<script>
+let users = JSON.parse(localStorage.getItem("users")) || [];
+let currentEmail = localStorage.getItem("currentUser");
+let user = users.find(u => u.email === currentEmail);
+
+let container = document.getElementById("transactionList");
+
+if(user && user.transactions.length > 0){
+    user.transactions.forEach(tx => {
+        container.innerHTML += `
+        <div class="premium-card">
+            <p>${tx}</p>
+        </div>
+        `;
+    });
+} else {
+    container.innerHTML = "<p>No transactions yet</p>";
+}
+</script>
+
+</body>
+</html>
