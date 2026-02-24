@@ -5,68 +5,215 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BitVault - Dashboard</title>
 <link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script src="script.js" defer></script>
 </head>
 <body>
 
 <div class="layout">
+    <!-- Sidebar -->
     <aside class="sidebar">
         <h2>₿ BitVault</h2>
         <ul>
-            <li onclick="window.location.href='transactions.html'">Transactions</li>
             <li class="active">Dashboard</li>
-            <li onclick="logout()">Logout</li>
+            <li onclick="window.location.href='transactions.html'">Transactions</li>
+            <li onclick="window.location.href='loans.html'">Loans</li>
+            <li onclick="window.location.href='collateral.html'">Collateral</li>
             <li onclick="toggleTheme()">Toggle Theme</li>
+            <li onclick="logout()">Logout</li>
         </ul>
     </aside>
 
+    <!-- Main Content -->
     <main class="main-content">
-        <div class="premium-card" style="text-align:center; margin-bottom:20px;">
-    <h3>Max Borrow</h3>
-    <p id="maxBorrow">Calculating...</p>
-</div>
+        <!-- Top Bar -->
         <div class="top-bar">
             <h1>Dashboard</h1>
             <div class="price" id="btcPrice">Loading BTC Price...</div>
         </div>
 
-        <div class="premium-card">
-            <h3>Max Borrowable</h3>
-            <p id="maxBorrow">0 BTC (~$0)</p>
+        <!-- Max Borrow Display -->
+        <div class="premium-card" style="text-align:center; margin-bottom:20px;">
+            <h3>You can borrow up to</h3>
+            <p id="maxBorrow">Calculating...</p>
         </div>
 
-        <div class="premium-card">
-            <h3>BTC Balance</h3>
-            <p id="btcBalance">0 BTC</p>
-            <input type="number" id="btcInput" placeholder="Deposit BTC">
-            <button class="primary-btn" onclick="deposit()">Deposit</button>
-        </div>
+        <!-- Cards -->
+        <div class="cards">
+            <!-- BTC Collateral -->
+            <div class="premium-card">
+                <h3>Bitcoin Collateral</h3>
+                <p id="btcBalance">0 BTC</p>
+                <input type="number" id="btcInput" placeholder="Deposit BTC">
+                <button onclick="deposit()" class="primary-btn">Deposit</button>
+                <p>Deposit BTC to:</p>
+                <input type="text" value="bc1qu9d6lv4rvkdkh34t8kk4ge0egc7r2m954tc2jq" id="walletAddress" readonly>
+                <button onclick="copyWallet()" class="primary-btn">Copy Address</button>
+            </div>
 
-        <div class="premium-card">
-            <h3>Borrow Funds</h3>
-            <input type="number" id="loanRequest" placeholder="Loan amount in USD">
-            <p id="requiredBTC">Required Collateral: 0 BTC</p>
-            <select id="loanDuration">
-                <option value="7">7 Days (5%)</option>
-                <option value="14">14 Days (8%)</option>
-                <option value="30">30 Days (12%)</option>
-            </select>
-            <button class="primary-btn" onclick="calculateRequiredBTC()">Calculate Collateral</button>
-            <button class="primary-btn" onclick="confirmLoan()">Confirm Loan</button>
-        </div>
+            <!-- Borrow Funds -->
+            <div class="premium-card">
+                <h3>Borrow Funds</h3>
+                <input type="number" id="loanRequest" placeholder="Enter loan amount in USD">
+                <p id="requiredBTC"></p>
+                <select id="loanDuration">
+                    <option value="7">7 Days (5%)</option>
+                    <option value="14">14 Days (8%)</option>
+                    <option value="30">30 Days (12%)</option>
+                </select>
+                <button onclick="calculateRequiredBTC()" class="primary-btn">Calculate Collateral</button>
+                <button onclick="confirmLoan()" class="primary-btn">Confirm Loan</button>
+            </div>
 
-        <div class="premium-card">
-            <h3>Active Loan</h3>
-            <p id="activeLoan">$0</p>
-            <p id="ltvPercent">0%</p>
-            <p id="ltvWarning" style="color:red;"></p>
-            <p id="loanTimer"></p>
-            <input type="number" id="repayAmount" placeholder="Repayment amount">
-            <button class="primary-btn" onclick="repayLoan()">Repay Loan</button>
+            <!-- Active Loan -->
+            <div class="premium-card">
+                <h3>Active Loan</h3>
+                <p id="ltvPercent">0%</p>
+                <p id="ltvWarning" style="color:red;"></p>
+                <p id="loanTimer"></p>
+                <input type="number" id="repayAmount" placeholder="Enter repayment amount">
+                <button onclick="repayLoan()" class="primary-btn">Repay Loan</button>
+            </div>
         </div>
-
     </main>
 </div>
+
+<script>
+// =============== JS START ===============
+
+// BTC price simulation
+let btcPrice = 40000;
+let btcBalance = 0;
+let loan = 0;
+let requestedLoan = 0;
+let requiredBTC = 0;
+
+// Current user simulation (localStorage)
+let currentEmail = localStorage.getItem("currentUser");
+let users = JSON.parse(localStorage.getItem("users")) || [];
+let userIndex = users.findIndex(u => u.email === currentEmail);
+if(userIndex >=0){
+    btcBalance = users[userIndex].btcBalance || 0;
+    loan = users[userIndex].loan || 0;
+}
+
+// Update BTC Price & Max Borrow Display
+async function fetchBTCPrice(){
+    try {
+        let response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
+        let data = await response.json();
+        btcPrice = data.bitcoin.usd;
+    } catch {
+        btcPrice = 40000;
+    }
+
+    const btcEl = document.getElementById("btcPrice");
+    if(btcEl) btcEl.innerText = "BTC Price: $" + btcPrice.toLocaleString();
+
+    updateMaxBorrow();
+}
+fetchBTCPrice();
+setInterval(fetchBTCPrice, 30000);
+
+// Display max borrow up to 10 BTC ~ $USD
+function updateMaxBorrow(){
+    const maxBorrowEl = document.getElementById("maxBorrow");
+    let maxBTC = 10; // max BTC borrow
+    let approxUSD = maxBTC * btcPrice;
+    if(maxBorrowEl) maxBorrowEl.innerText = `${maxBTC} BTC ~ $${approxUSD.toLocaleString()}`;
+}
+
+// Deposit BTC
+function deposit(){
+    let input = parseFloat(document.getElementById("btcInput").value);
+    if(!input) return alert("Enter BTC amount");
+
+    btcBalance += input;
+    users[userIndex].btcBalance = btcBalance;
+    localStorage.setItem("users", JSON.stringify(users));
+
+    document.getElementById("btcBalance").innerText = btcBalance + " BTC";
+}
+
+// Copy Wallet
+function copyWallet(){
+    let copyText = document.getElementById("walletAddress");
+    copyText.select();
+    document.execCommand("copy");
+    alert("Wallet Address Copied!");
+}
+
+// Loan calculation
+function calculateRequiredBTC(){
+    requestedLoan = parseFloat(document.getElementById("loanRequest").value);
+    if(!requestedLoan || requestedLoan <=0) return alert("Enter loan amount");
+
+    requiredBTC = (requestedLoan / 0.5) / btcPrice;
+    document.getElementById("requiredBTC").innerText = `Required Collateral: ${requiredBTC.toFixed(6)} BTC`;
+}
+
+// Confirm Loan
+function confirmLoan(){
+    if(!requestedLoan || requestedLoan <=0) return alert("Enter loan amount first");
+    if(btcBalance < requiredBTC) return alert("Insufficient BTC collateral");
+
+    let duration = parseInt(document.getElementById("loanDuration").value);
+    let interestRate = duration===7?0.05: duration===14?0.08:0.12;
+
+    loan = requestedLoan + (requestedLoan*interestRate);
+    users[userIndex].loan = loan;
+    localStorage.setItem("users", JSON.stringify(users));
+
+    document.getElementById("activeLoan").innerText = "$" + loan.toFixed(2);
+    updateLTV();
+    alert("Loan Approved ✅");
+}
+
+// Repay Loan
+function repayLoan(){
+    let repay = parseFloat(document.getElementById("repayAmount").value);
+    if(!repay || repay <=0) return alert("Enter repayment amount");
+
+    loan -= repay;
+    if(loan <=0){
+        loan=0;
+        alert("Loan Fully Repaid 🎉");
+    }
+    users[userIndex].loan = loan;
+    localStorage.setItem("users", JSON.stringify(users));
+    document.getElementById("activeLoan").innerText = "$" + loan.toFixed(2);
+    updateLTV();
+}
+
+// LTV update
+function updateLTV(){
+    let ltvEl = document.getElementById("ltvPercent");
+    let warnEl = document.getElementById("ltvWarning");
+    if(!btcBalance || btcBalance <=0){
+        if(ltvEl) ltvEl.innerText = "0%";
+        if(warnEl) warnEl.innerText = "";
+        return;
+    }
+    let ltv = (loan/(btcBalance*btcPrice))*100;
+    if(ltvEl) ltvEl.innerText = ltv.toFixed(2) + "%";
+    if(warnEl) warnEl.innerText = ltv>70?"⚠ High Risk: Add BTC or repay loan!":"";
+}
+
+// Theme toggle
+function toggleTheme(){
+    document.body.classList.toggle("light-mode");
+}
+
+// Logout
+function logout(){
+    localStorage.removeItem("currentUser");
+    window.location.href="index.html";
+}
+
+// Init
+document.getElementById("btcBalance").innerText = btcBalance + " BTC";
+document.getElementById("activeLoan").innerText = "$" + loan.toFixed(2);
+updateMaxBorrow();
+updateLTV();
+
+</script>
 </body>
 </html>
