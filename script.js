@@ -3,6 +3,14 @@ const SUPABASE_URL = "https://owulgpdukueqduvlurks.supabase.co";
 const SUPABASE_KEY = "sb_publishable_2RI-unk9wI_AIEOlSUsbtA_Rwk6Tqdk";
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ===== TEST CONNECTION =====
+async function testConnection() {
+    const { data, error } = await supabase.from("users").select("*");
+    console.log("DATA:", data);
+    console.log("ERROR:", error);
+}
+
+testConnection();
 // ================= BTC PRICE =================
 let btcPrice = 40000; // fallback
 let btcBalance = 0;
