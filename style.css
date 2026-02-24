@@ -242,3 +242,35 @@ button.primary-btn:hover {
         display: none;
     }
 }
+/* MOBILE RESPONSIVE SIDEBAR */
+@media screen and (max-width: 768px) {
+    .layout {
+        flex-direction: column; /* stack sidebar on top */
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0;
+    }
+
+    .sidebar ul {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .sidebar li {
+        padding: 10px 15px;
+        opacity: 1;
+        font-size: 14px;
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+}
