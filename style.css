@@ -1,0 +1,244 @@
+/* ==========================
+   GLOBAL STYLES
+========================== */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #0f172a;
+    color: white;
+    transition: all 0.4s ease;
+}
+
+.light-mode {
+    background: #f3f4f6;
+    color: black;
+}
+
+/* ==========================
+   LOGIN / REGISTER
+========================== */
+.auth-wrapper {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    padding: 40px;
+    border-radius: 16px;
+    width: 360px;
+    text-align: center;
+    box-shadow: 0 8px 50px rgba(0,0,0,0.5);
+    transition: all 0.4s ease;
+}
+
+.auth-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 60px rgba(247,147,26,0.4);
+}
+
+.logo {
+    font-size: 28px;
+    color: #f7931a;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 14px;
+    opacity: 0.7;
+    margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    margin: 12px 0;
+    border-radius: 10px;
+    border: none;
+    background: #1e293b;
+    color: white;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+input:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(247,147,26,0.7);
+    background: #1c253a;
+}
+
+.primary-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(90deg, #f7931a, #ffae42);
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.primary-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(247,147,26,0.7);
+}
+
+.secondary-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #f7931a;
+    background: transparent;
+    color: #f7931a;
+    font-weight: bold;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.secondary-btn:hover {
+    background: #f7931a;
+    color: black;
+    box-shadow: 0 0 10px rgba(247,147,26,0.5);
+}
+
+/* ==========================
+   DASHBOARD LAYOUT
+========================== */
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 220px;
+    background: #111827;
+    height: 100vh;
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+}
+
+.sidebar h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    padding: 14px 0;
+    cursor: pointer;
+    opacity: 0.75;
+    transition: all 0.3s ease;
+}
+
+.sidebar li.active,
+.sidebar li:hover {
+    opacity: 1;
+    color: #f7931a;
+    transform: translateX(5px);
+}
+
+.main-content {
+    flex: 1;
+    padding: 30px;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+
+/* ==========================
+   DASHBOARD CARDS
+========================== */
+.cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.premium-card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(15px);
+    padding: 25px;
+    border-radius: 16px;
+    width: 280px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    transition: all 0.4s ease;
+    cursor: default;
+}
+
+.premium-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 35px rgba(247,147,26,0.5);
+}
+
+/* ==========================
+   FORMS INSIDE DASHBOARD
+========================== */
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: none;
+    background: #1e293b;
+    color: white;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+input:focus, select:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(247,147,26,0.6);
+    background: #1c253a;
+}
+
+/* ==========================
+   BUTTONS INSIDE DASHBOARD
+========================== */
+button.primary-btn {
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+button.primary-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(247,147,26,0.7);
+}
+
+/* ==========================
+   LTV WARNINGS
+========================== */
+#ltvWarning {
+    font-weight: bold;
+    color: #ff6b6b;
+    margin-top: 5px;
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+@media (max-width: 900px){
+    .cards {
+        flex-direction: column;
+    }
+    .premium-card {
+        width: 100%;
+    }
+    .sidebar {
+        display: none;
+    }
+}
