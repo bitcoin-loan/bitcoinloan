@@ -6,8 +6,12 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // ===== TEST CONNECTION =====
 async function testConnection() {
     const { data, error } = await supabase.from("users").select("*");
-    console.log("DATA:", data);
-    console.log("ERROR:", error);
+
+    if(error){
+        alert("Error connecting: " + error.message);
+    } else {
+        alert("Connection successful ✅");
+    }
 }
 
 testConnection();
