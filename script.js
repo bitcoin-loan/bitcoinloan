@@ -32,16 +32,13 @@ async function fetchBTCPrice() {
 // Fetch every 10 seconds
 fetchBTCPrice();
 setInterval(fetchBTCPrice, 30000);
-function updateMaxBorrowDisplay() {
-    // Max borrowable in BTC
-    let maxBorrowBTC = 10; // change to your platform limit
-    // USD approximation
-    let maxBorrowUSD = maxBorrowBTC * btcPrice;
 
+// Display max borrow up to 10 BTC ~ $USD
+function updateMaxBorrow(){
     const maxBorrowEl = document.getElementById("maxBorrow");
-    if(maxBorrowEl){
-        maxBorrowEl.innerText = `You can borrow up to ${maxBorrowBTC} BTC ~ $${maxBorrowUSD.toLocaleString()}`;
-    }
+    let maxBTC = 10; // max BTC borrow
+    let approxUSD = maxBTC * btcPrice;
+    if(maxBorrowEl) maxBorrowEl.innerText = `${maxBTC} BTC ~ $${approxUSD.toLocaleString()}`;
 }
 
 // Call it whenever BTC price updates
