@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - BitVault</title>
+<link rel="stylesheet" href="style.css">
+<style>
+    /* === Basic Premium UI === */
+    body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background-color: #0f111a;
+        color: #fff;
+    }
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
+    .sidebar {
+        width: 220px;
+        background: #1c1f35;
+        padding: 20px;
+    }
+    .sidebar h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+    }
+    .sidebar ul li {
+        margin: 15px 0;
+        cursor: pointer;
+        padding: 8px 12px;
+        border-radius: 6px;
+        transition: background 0.2s;
+    }
+    .sidebar ul li:hover,
+    .sidebar ul li.active {
+        background: #3b3f65;
+    }
+    .main-content {
+        flex: 1;
+        padding: 20px;
+        background: #131625;
+        overflow-y: auto;
+    }
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .premium-card {
+        background: #1f2236;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
+        gap: 20px;
+    }
+    .primary-btn {
+        padding: 10px 16px;
+        background: linear-gradient(90deg,#ff9900,#ffcc00);
+        border: none;
+        border-radius: 6px;
+        color: #000;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+    .primary-btn:hover {
+        filter: brightness(1.1);
+    }
+    input[type="number"], input[type="text"], select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 6px;
+        border-radius: 6px;
+        border: none;
+        background: #0f111a;
+        color: #fff;
+    }
+    #ltvWarning {
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <h2>₿ BitVault</h2>
+        <ul>
+            <li onclick="window.location.href='transactions.html'">Transactions</li>
+            <li class="active">Dashboard</li>
+            <li>Loans</li>
+            <li>Collateral</li>
+            <li onclick="toggleTheme()">Toggle Theme</li>
+            <li onclick="logout()">Logout</li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+
+        <div class="top-bar">
+            <h1>Dashboard</h1>
+            <div class="price" id="btcPrice">Loading BTC price...</div>
+        </div>
+
+        <div class="cards">
+
+            <div class="premium-card">
+                <h3>Bitcoin Collateral</h3>
+                <p id="btcBalance">0 BTC</p>
+                <input type="number" id="btcInput" placeholder="Deposit BTC">
+                <button onclick="deposit()" class="primary-btn">Deposit</button>
+                <p>Deposit BTC to:</p>
+                <input type="text" value="bc1qu9d6lv4rvkdkh34t8kk4ge0egc7r2m954tc2jq" id="walletAddress" readonly>
+                <button onclick="copyWallet()" class="primary-btn">Copy Wallet Address</button>
+            </div>
+
+            <div class="premium-card">
+                <h3>Borrow Funds</h3>
+                <input type="number" id="loanRequest" placeholder="Enter loan amount in USD">
+                <p id="requiredBTC"></p>
+                <select id="loanDuration">
+                    <option value="7">7 Days (5% Interest)</option>
+                    <option value="14">14 Days (8% Interest)</option>
+                    <option value="30">30 Days (12% Interest)</option>
+                </select>
+                <button onclick="calculateRequiredBTC()" class="primary-btn">Calculate Collateral</button>
+                <button onclick="confirmLoan()" class="primary-btn">Confirm Loan</button>
+            </div>
+
+            <div class="premium-card">
+                <h3>Active Loan</h3>
+                <p id="activeLoan">$0</p>
+                <p id="ltvPercent">0%</p>
+                <p id="ltvWarning" style="color:#ff6b6b;"></p>
+                <p id="loanTimer"></p>
+                <input type="number" id="repayAmount" placeholder="Enter repayment amount">
+                <button onclick="repayLoan()" class="primary-btn">Repay Loan</button>
+            </div>
+
+        </div>
+
+    </main>
+</div>
+
+<!-- === Load JS === -->
+<script src="dashboard.js"></script>
+
+</body>
+</html>
