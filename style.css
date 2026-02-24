@@ -1,27 +1,18 @@
-/* ==========================
-   GLOBAL STYLES
-========================== */
+/* ================= GENERAL ================= */
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
     background: #0f172a;
     color: white;
-    transition: all 0.4s ease;
 }
 
-.light-mode {
-    background: #f3f4f6;
-    color: black;
-}
-
-/* ==========================
-   LOGIN / REGISTER
-========================== */
+/* ================= LOGIN/REGISTER ================= */
 .auth-wrapper {
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 10px;
 }
 
 .auth-card {
@@ -29,87 +20,65 @@ body {
     backdrop-filter: blur(20px);
     padding: 40px;
     border-radius: 16px;
-    width: 360px;
+    width: 100%;
+    max-width: 380px;
     text-align: center;
-    box-shadow: 0 8px 50px rgba(0,0,0,0.5);
-    transition: all 0.4s ease;
+    box-shadow: 0 0 40px rgba(0,0,0,0.4);
+    transition: transform 0.3s ease;
 }
 
 .auth-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 60px rgba(247,147,26,0.4);
 }
 
 .logo {
-    font-size: 28px;
+    font-size: 32px;
     color: #f7931a;
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
-.subtitle {
-    font-size: 14px;
-    opacity: 0.7;
+.auth-card h2 {
     margin-bottom: 20px;
+    font-size: 22px;
 }
 
 input {
     width: 100%;
-    padding: 14px;
-    margin: 12px 0;
-    border-radius: 10px;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
     border: none;
     background: #1e293b;
     color: white;
-    font-size: 14px;
-    transition: 0.3s;
-}
-
-input:focus {
-    outline: none;
-    box-shadow: 0 0 10px rgba(247,147,26,0.7);
-    background: #1c253a;
+    font-size: 16px;
 }
 
 .primary-btn {
     width: 100%;
-    padding: 14px;
-    border-radius: 10px;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
     border: none;
     background: linear-gradient(90deg, #f7931a, #ffae42);
     color: black;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease;
+    font-size: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .primary-btn:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(247,147,26,0.7);
+    box-shadow: 0 0 15px #f7931a;
 }
 
-.secondary-btn {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #f7931a;
-    background: transparent;
-    color: #f7931a;
-    font-weight: bold;
-    margin-top: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+p {
+    font-size: 14px;
+    opacity: 0.8;
 }
 
-.secondary-btn:hover {
-    background: #f7931a;
-    color: black;
-    box-shadow: 0 0 10px rgba(247,147,26,0.5);
-}
-
-/* ==========================
-   DASHBOARD LAYOUT
-========================== */
+/* ================= DASHBOARD ================= */
 .layout {
     display: flex;
     min-height: 100vh;
@@ -120,10 +89,11 @@ input:focus {
     background: #111827;
     height: 100vh;
     padding: 20px;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+    flex-shrink: 0;
 }
 
 .sidebar h2 {
+    color: #f7931a;
     margin-bottom: 20px;
     font-size: 24px;
 }
@@ -134,35 +104,32 @@ input:focus {
 }
 
 .sidebar li {
-    padding: 14px 0;
+    padding: 12px 0;
     cursor: pointer;
-    opacity: 0.75;
-    transition: all 0.3s ease;
+    opacity: 0.8;
+    transition: 0.3s;
 }
 
 .sidebar li.active,
 .sidebar li:hover {
     opacity: 1;
     color: #f7931a;
-    transform: translateX(5px);
 }
 
 .main-content {
     flex: 1;
     padding: 30px;
+    background: #0f172a;
+    overflow-y: auto;
 }
 
 .top-bar {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     margin-bottom: 30px;
-    font-size: 16px;
+    flex-wrap: wrap;
 }
 
-/* ==========================
-   DASHBOARD CARDS
-========================== */
 .cards {
     display: flex;
     gap: 20px;
@@ -172,125 +139,39 @@ input:focus {
 .premium-card {
     background: rgba(255,255,255,0.05);
     backdrop-filter: blur(15px);
-    padding: 25px;
+    padding: 20px;
     border-radius: 16px;
     width: 280px;
     box-shadow: 0 0 20px rgba(0,0,0,0.4);
-    transition: all 0.4s ease;
-    cursor: default;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .premium-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 0 35px rgba(247,147,26,0.5);
+    transform: translateY(-8px);
+    box-shadow: 0 0 25px rgba(247,147,26,0.5);
 }
 
-/* ==========================
-   FORMS INSIDE DASHBOARD
-========================== */
-input, select {
+select {
     width: 100%;
-    padding: 12px;
-    margin-bottom: 12px;
+    padding: 10px;
     border-radius: 8px;
-    border: none;
     background: #1e293b;
     color: white;
-    font-size: 14px;
-    transition: 0.3s;
+    border: none;
+    margin-bottom: 10px;
+    font-size: 16px;
 }
 
-input:focus, select:focus {
-    outline: none;
-    box-shadow: 0 0 10px rgba(247,147,26,0.6);
-    background: #1c253a;
-}
-
-/* ==========================
-   BUTTONS INSIDE DASHBOARD
-========================== */
-button.primary-btn {
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-button.primary-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(247,147,26,0.7);
-}
-
-/* ==========================
-   LTV WARNINGS
-========================== */
-#ltvWarning {
-    font-weight: bold;
-    color: #ff6b6b;
-    margin-top: 5px;
-}
-
-/* ==========================
-   RESPONSIVE
-========================== */
-@media (max-width: 900px){
-    .cards {
-        flex-direction: column;
-    }
-    .premium-card {
-        width: 100%;
-    }
-    .sidebar {
-        display: none;
-    }
-}
-/* MOBILE RESPONSIVE SIDEBAR */
-@media screen and (max-width: 768px) {
-    .layout {
-        flex-direction: column; /* stack sidebar on top */
-    }
-
-    .sidebar {
-        width: 100%;
-        height: auto;
-        display: flex;
-        justify-content: space-around;
-        padding: 10px 0;
-    }
-
-    .sidebar ul {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        padding: 0;
-    }
-
-    .sidebar li {
-        padding: 10px 15px;
-        opacity: 1;
-        font-size: 14px;
-    }
-
-    .main-content {
-        padding: 20px;
-    }
-}
-
-/* Maximum Borrow Banner */
-.max-borrow-banner {
-    background: linear-gradient(90deg, #f7931a, #ffae42);
+.light-mode {
+    background: #f3f4f6;
     color: black;
-    font-weight: bold;
-    font-size: 18px;
-    text-align: center;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
 }
 
-@media screen and (max-width: 768px) {
-    .max-borrow-banner {
-        font-size: 16px;
-        padding: 12px;
-    }
+.light-mode .sidebar {
+    background: #e5e7eb;
+}
+
+.light-mode .premium-card {
+    background: rgba(255,255,255,0.1);
+    color: black;
 }
