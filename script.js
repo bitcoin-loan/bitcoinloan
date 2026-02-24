@@ -28,20 +28,11 @@ async function fetchBTCPrice() {
     updateMaxBorrow();
     updateLTV();
 }
+
+// Fetch every 30 seconds
 fetchBTCPrice();
 setInterval(fetchBTCPrice, 30000);
 
-// Display max borrow up to 10 BTC ~ $USD
-function updateMaxBorrow(){
-    const maxBorrowEl = document.getElementById("maxBorrow");
-    let maxBTC = 10; // max BTC borrow
-    let approxUSD = maxBTC * btcPrice;
-    if(maxBorrowEl) maxBorrowEl.innerText = `${maxBTC} BTC ~ $${approxUSD.toLocaleString()}`;
-}
-
-// Call it whenever BTC price updates
-setInterval(updateMaxBorrowDisplay, 5000);
-updateMaxBorrowDisplay();
 // ================= AUTH =================
 function showRegister() {
     document.getElementById("loginBox").style.display = "none";
