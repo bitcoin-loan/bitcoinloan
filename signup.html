@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up - QuickBTC</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<section class="auth-container">
+  <h1>Sign Up</h1>
+  <form id="signupForm">
+    <input type="text" id="signupName" placeholder="Full Name" required>
+    <input type="email" id="signupEmail" placeholder="Email" required>
+    <input type="password" id="signupPassword" placeholder="Password" required>
+    <input type="text" id="signupWallet" placeholder="Bitcoin Wallet Address" required>
+    <button type="submit">Create Account</button>
+  </form>
+  <p>Already have an account? <a href="login.html">Login here</a></p>
+  <p id="signupMessage"></p>
+</section>
+
+<script>
+const signupForm = document.getElementById("signupForm");
+signupForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("signupName").value.trim();
+  const email = document.getElementById("signupEmail").value.trim();
+  const password = document.getElementById("signupPassword").value;
+  const wallet = document.getElementById("signupWallet").value.trim();
+
+  // Validate wallet
+  if(wallet.length < 26 || wallet.length > 62){
+    document.getElementById("signupMessage").innerText = "❌ Invalid Bitcoin wallet address";
+    return;
+  }
+
+  // Get existing users from localStorage
+  const users = JSON.parse(localStorage.getItem("users") || "[]");
+
+  // Check if email already exists
+  if(users.some(u => u.email === email)){
+    document.getElementById("signupMessage").innerText = "❌ Email already registered";
+    return;
+  }
+
+  // Add new user
+  users.push({name, email, password, wallet, loans: []});
+  localStorage.setItem("users", JSON.stringify(users));
+
+  document.getElementById("signupMessage").innerText = "✅ Account created! Redirecting to login...";
+  setTimeout(() => {
+    window.location.href = "login.html";
+  }, 1500);
+});
+</script>
+</body>
+</html>

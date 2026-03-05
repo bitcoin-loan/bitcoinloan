@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Apply for QuickBTC Loan</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="nav">
+  <img src="images/logo.png" class="logo">
+  <button onclick="window.location.href='index.html'">Home</button>
+</header>
+
+<section class="calculator">
+  <h2>Collateral Calculator</h2>
+  <p>Use the slider to choose your loan amount. Collateral (10%) updates instantly in USD and BTC.</p>
+  <input type="range" id="loanSlider" min="50" max="1000" step="10" value="100" />
+  <p>Loan Amount: $<span id="loanAmountDisplay">100</span></p>
+  <p id="collateralResult">Collateral to pay: $10.00 (~0.0005 BTC)</p>
+</section>
+
+<section class="form-section" id="loanForm">
+  <h2>Apply Now</h2>
+
+  <form onsubmit="event.preventDefault(); saveAndGoToPayment();">
+    <input type="text" id="name" placeholder="Your Name" required>
+    <input type="email" id="email" placeholder="Your Email" required>
+    <p style="font-size: 14px; color: #ccc;">
+      Enter your Bitcoin wallet address carefully. This is where your loan will be sent.
+    </p>
+    <input type="text" id="wallet" placeholder="Your Bitcoin Wallet Address" required>
+    <button type="submit">Submit Request</button>
+    <button type="button" onclick="saveAndGoToPayment()">Pay Collateral</button>
+  </form>
+
+  <p id="message"></p>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>

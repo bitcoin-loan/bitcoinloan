@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QuickBTC Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+ <nav>
+    <a href="dashboard.html">Home</a> |
+    <a href="about.html">About</a> |
+    <a href="terms.html">Terms</a> |
+    <a href="contact.html">Contact</a>
+</nav> 
+  <p style="color:green;">🟢 Secure • Trusted • Fast Bitcoin Loans</p>
+<header class="nav">
+  <img src="images/logo.png" class="logo">
+  <button onclick="scrollToSection('dashboardSection')">Dashboard</button>
+</header>
+
+<section class="dashboard" id="dashboardSection">
+  <h1>Welcome, <span id="userName"></span>!</h1>
+
+  <div class="loan-summary">
+    <h2>Loan Summary</h2>
+    <p><strong>Total Loan:</strong> $<span id="loanAmount"></span></p>
+    <p><strong>Collateral Paid:</strong> $<span id="collateralPaid"></span></p>
+    <p><strong>Remaining Balance:</strong> $<span id="remainingLoan"></span></p>
+    <p><strong>BTC Equivalent:</strong> <span id="btcEquivalent"></span> BTC</p>
+    <p><strong>Repayment Due Date:</strong> <span id="repaymentDue"></span></p>
+
+    <div class="repayment-bar">
+      <div class="repayment-progress" id="repaymentProgress"></div>
+    </div>
+
+    <button onclick="openPaymentModal()">Pay Now</button>
+  </div>
+
+  <div class="btc-price">
+    <h2>Current BTC/USD Price</h2>
+    <p id="btcPrice">Loading...</p>
+  </div>
+</section>
+  
+<!-- Payment Modal -->
+<div class="modal" id="paymentModal">
+  <div class="modal-content">
+    <span class="close" onclick="closePaymentModal()">&times;</span>
+    <h2>Complete Your Repayment</h2>
+    <p>Send the exact amount to the Bitcoin address below:</p>
+    <h3 id="repayBtcAddress">bc1qu9d6lv4rvkdkh34t8kk4ge0egc7r2m954tc2jq</h3>
+    <button onclick="copyRepayAddress()">Copy Address</button>
+    <div class="qr">
+      <img src="images/btc-qr.png" alt="QR Code">
+    </div>
+    <p>After payment, upload your receipt:</p>
+    <form action="https://formspree.io/f/xxxxabcd" method="POST" enctype="multipart/form-data">
+      <input type="file" name="receipt" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      <button type="submit">Upload Receipt</button>
+    </form>
+  </div>
+</div>
+
+<script src="dashboard.js"></script>
+</body>
+</html>

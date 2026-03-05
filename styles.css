@@ -1,0 +1,477 @@
+/* ---------------- BODY & GLOBAL ---------------- */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #0d1117;
+  color: #fff;
+  line-height: 1.5;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  padding: 12px 25px;
+  background: #f7931a;
+  border: none;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  opacity: 0.9;
+  transform: scale(1.03);
+}
+
+/* ---------------- NAV ---------------- */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: #000;
+}
+
+.logo {
+  width: 130px;
+  height: auto;
+}
+
+/* ---------------- HERO ---------------- */
+.hero {
+  height: 90vh;
+  background: url("images/hero.jpg") center/cover no-repeat;
+  position: relative;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.hero-content {
+  position: relative;
+  top: 30%;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.hero p {
+  font-size: 18px;
+  margin-bottom: 25px;
+}
+
+/* ---------------- STEPS ---------------- */
+.steps {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.step-box {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-top: 40px;
+}
+
+.card {
+  background: #161b22;
+  padding: 25px;
+  border-radius: 12px;
+  width: 220px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+
+.card img {
+  width: 50px;
+  margin-bottom: 15px;
+}
+
+/* ---------------- CALCULATOR ---------------- */
+.calculator {
+  background: #161b22;
+  padding: 25px 20px;
+  border-radius: 12px;
+  margin: 40px auto;
+  text-align: center;
+  max-width: 500px;
+}
+
+.calculator input[type="range"] {
+  width: 90%;
+  -webkit-appearance: none;
+  height: 10px;
+  background: #444;
+  border-radius: 5px;
+  outline: none;
+}
+
+.calculator input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  background: #f7931a;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.calculator input[type="range"]::-webkit-slider-thumb:hover {
+  background: #ffb347;
+}
+
+.calculator input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  background: #f7931a;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+/* Collateral display */
+#collateralResult {
+  margin-top: 12px;
+  font-size: 16px;
+  color: #f7931a;
+  font-weight: bold;
+}
+
+/* ---------------- FORM ---------------- */
+.form-section {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"] {
+  display: block;
+  margin: 12px auto;
+  padding: 14px;
+  width: 80%;
+  max-width: 350px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0d1117;
+  color: #fff;
+}
+
+input:focus {
+  outline: 2px solid #f7931a;
+}
+
+/* Message */
+#message {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #f7931a;
+}
+
+/* ---------------- TESTIMONIALS ---------------- */
+.testimonials {
+  padding: 60px 20px;
+  text-align: center;
+  background: #0d1117;
+}
+
+.testimonials h2 {
+  margin-bottom: 40px;
+  font-size: 34px;
+}
+
+.testimonial-slider {
+  position: relative;
+  max-width: 400px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.testimonial {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: #161b22;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: all 0.5s ease;
+}
+
+.testimonial.active {
+  display: flex;
+}
+
+.testimonial img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+
+.testimonial p {
+  font-size: 14px;
+  color: #ccc;
+  margin-bottom: 12px;
+}
+
+.testimonial h4 {
+  font-size: 15px;
+  color: #f7931a;
+}
+
+/* ---------------- FAQ ---------------- */
+.how-to {
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.faq-container {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.faq-item {
+  margin-bottom: 15px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #161b22;
+}
+
+.faq-question {
+  width: 100%;
+  padding: 15px 20px;
+  background: #222831;
+  color: #f7931a;
+  border: none;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.faq-question:hover {
+  background: #333;
+}
+
+.faq-answer {
+  display: none;
+  padding: 15px 20px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+/* ---------------- TRUST ---------------- */
+.trust {
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.trust-box p {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+/* ---------------- FOOTER ---------------- */
+footer {
+  padding: 25px;
+  text-align: center;
+  background: #000;
+}
+
+/* ---------------- LIVE POPUP ---------------- */
+.live-box {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #161b22;
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  opacity: 0;
+  z-index: 1000;
+  transition: opacity 0.5s ease;
+}
+
+.live-box.show {
+  opacity: 1;
+}
+
+/* ---------------- CHAT ---------------- */
+.chat-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #f7931a;
+  color: #fff;
+  padding: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  z-index: 1000;
+}
+
+.chat-box {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 320px;
+  background: #161b22;
+  border-radius: 12px;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1000;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+.chat-header {
+  background: #222;
+  padding: 12px;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+}
+
+.chat-body {
+  padding: 12px;
+  height: 220px;
+  overflow-y: auto;
+  font-size: 14px;
+}
+
+.bot {
+  color: #f7931a;
+}
+
+.user {
+  text-align: right;
+  color: #ccc;
+}
+
+.chat-input {
+  display: flex;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 0 0 0 12px;
+  background: #0d1117;
+  color: #fff;
+}
+
+.chat-input button {
+  padding: 12px;
+  background: #f7931a;
+  border: none;
+  color: #fff;
+  border-radius: 0 0 12px 0;
+  cursor: pointer;
+}
+
+/* ---------------- PAYMENT PAGE ---------------- */
+.payment-container {
+  text-align: center;
+  padding: 50px 20px;
+  max-width: 500px;
+  margin: 0 auto;
+  background: #161b22;
+  border-radius: 15px;
+}
+
+.address-box {
+  background: #0d1117;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 20px auto;
+  width: 100%;
+}
+
+.address-box h3 {
+  word-break: break-all;
+  margin: 10px 0;
+}
+
+.qr img {
+  width: 220px;
+  margin: 20px 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+.countdown h2 {
+  font-size: 44px;
+  color: #f7931a;
+  margin: 10px 0;
+}
+
+.warning {
+  color: #ff4d4d;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.status {
+  color: #f7931a;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.note {
+  font-size: 14px;
+  color: #ccc;
+  margin-bottom: 20px;
+}
+
+form input[type="file"],
+form input[type="email"],
+form button {
+  display: block;
+  margin: 12px auto;
+  padding: 12px;
+  width: 80%;
+  max-width: 300px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0d1117;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+form button:hover {
+  background: #fbb03b;
+}
+
+/* ---------------- RESPONSIVE ---------------- */
+@media (max-width: 768px) {
+  .step-box { flex-direction: column; gap: 30px; }
+  .calculator input[type="range"] { width: 100%; }
+  .chat-box { width: 90%; bottom: 100px; }
+  .hero h1 { font-size: 36px; }
+  .hero p { font-size: 16px; }
+}

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QuickBTC Loan</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <img src="images/logo.png" class="logo">
+   <button onclick="window.location.href='signup.html'">Borrow Now</button>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="overlay"></div>
+  <div class="hero-content">
+    <h1>Instant Bitcoin Loans</h1>
+    <p>Low collateral • Fast approval • Secure system</p>
+    <button onclick="window.location.href='signup.html'">Borrow Now</button>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="steps">
+  <h2>How It Works</h2>
+  <div class="step-box">
+    <div class="card">
+      <img src="images/btc.png">
+      <h3>Deposit</h3>
+      <p>Send small collateral</p>
+    </div>
+
+    <div class="card">
+      <img src="images/btc.png">
+      <h3>Approve</h3>
+      <p>Instant verification</p>
+    </div>
+
+    <div class="card">
+      <img src="images/btc.png">
+      <h3>Receive</h3>
+      <p>Get Bitcoin instantly</p>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials">
+  <h2>What Our Users Say</h2>
+  
+  <div class="testimonial-slider" id="testimonialSlider">
+
+    <!-- Testimonial 1 -->
+    <div class="testimonial active">
+      <img src="images/user1.jpg" alt="User 1">
+      <p>"QuickBTC loan helped me get Bitcoin instantly. Highly recommend!"</p>
+      <h4>— John D., Lagos</h4>
+    </div>
+
+    <!-- Testimonial 2 -->
+    <div class="testimonial">
+      <img src="images/user2.jpg" alt="User 2">
+      <p>"Easy and fast process. Collateral system is clear."</p>
+      <h4>— Sarah K., Abuja</h4>
+    </div>
+
+    <!-- Testimonial 3 -->
+    <div class="testimonial">
+      <img src="images/user3.jpg" alt="User 3">
+      <p>"I got my Bitcoin loan in minutes. Love it!"</p>
+      <h4>— Michael T., Accra</h4>
+    </div>
+    
+    <!-- Testimonial 4 -->
+    <div class="testimonial">
+      <img src="images/user4.jpg" alt="User 4">
+      <p>"I got my Bitcoin loan in minutes. Love it!"</p>
+      <h4>— Cloe Y., United States</h4>
+    </div>
+
+    <!-- Add more testimonials by copying the block above -->
+  </div>
+</section>
+  
+  <p id="message"></p>
+</section>
+
+<section class="how-to">
+  <h2>How to Use QuickBTC</h2>
+  <div class="faq-container">
+
+    <div class="faq-item">
+      <button class="faq-question">1️⃣ Fill the Loan Form</button>
+      <div class="faq-answer">
+        <p>Enter your name, email, loan amount, and your Bitcoin wallet address. Click submit.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">2️⃣ Pay Collateral</button>
+      <div class="faq-answer">
+        <p>Click “Pay Collateral” → see your BTC address and QR code → pay 10% collateral.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">3️⃣ Upload Payment Receipt</button>
+      <div class="faq-answer">
+        <p>After sending BTC, upload your payment receipt for verification.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">4️⃣ Receive Loan</button>
+      <div class="faq-answer">
+        <p>Once your payment is confirmed, your BTC loan will be sent directly to your wallet address.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+  
+<!-- TRUST -->
+<section class="trust">
+  <h2>Trusted & Secure</h2>
+  <div class="trust-box">
+    <p>🔒 Encrypted Transactions</p>
+    <p>⚡ Instant Processing</p>
+    <p>🌍 Global Access</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 QuickBTC Loan</p>
+</footer>
+  
+<!-- WhatsApp Button -->
+<a href="https://wa.me/18708104001/?text=Hello%2C%20I%20want%20a%20Bitcoin%20loan" 
+   target="_blank" class="whatsapp-chat">
+  💬 Chat with us
+</a>
+
+<!-- Agent Status -->
+<div class="agent-status">
+  🟢 Agent Online
+</div>
+
+<!-- Chat Toggle Button -->
+<div class="chat-toggle" onclick="toggleChat()">
+  💬
+</div>
+
+<!-- Chat Box -->
+<div class="chat-box" id="chatBox">
+  <div class="chat-header">
+    Support
+    <span onclick="toggleChat()">✖</span>
+  </div>
+
+  <div class="chat-body" id="chatBody">
+    <p class="bot">👋 Hello! Need help getting a Bitcoin loan?</p>
+  </div>
+
+  <div class="chat-suggestions">
+  <button onclick="quickMsg('How do I get a loan?')">Loan</button>
+  <button onclick="quickMsg('How do I pay?')">Payment</button>
+  <button onclick="quickMsg('Is it safe?')">Safety</button>
+</div>
+  
+  <div class="chat-input">
+    <input type="text" id="userMessage" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+  
+<div class="live-box" id="liveBox">
+  <p id="liveText">Someone just received Bitcoin 💰</p>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
