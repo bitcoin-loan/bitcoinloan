@@ -92,3 +92,35 @@ async function loadBTCPrice() {
   }
 }
 loadBTCPrice();
+
+// Load loan data
+const data = JSON.parse(localStorage.getItem("loanData"));
+
+if (data) {
+  document.getElementById("userName").innerText = data.name;
+  document.getElementById("loanAmount").innerText = data.loan;
+  document.getElementById("collateralPaid").innerText = data.collateral;
+  document.getElementById("remainingLoan").innerText = data.loan - data.collateral;
+  document.getElementById("btcEquivalent").innerText = data.btc;
+}
+
+// Withdrawal request
+function requestWithdrawal() {
+
+  const status = document.getElementById("withdrawStatus");
+  const btn = document.getElementById("withdrawBtn");
+
+  status.innerText = "⏳ Collateral payment is being verified...";
+  btn.disabled = true;
+  btn.innerText = "Verification in progress";
+
+  // simulate verification delay
+  setTimeout(() => {
+
+    status.innerText = "✅ Collateral verified. Loan will be released shortly.";
+
+    btn.innerText = "Processing Loan";
+
+  }, 5000);
+
+}
