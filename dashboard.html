@@ -32,7 +32,10 @@
     <p><strong>Repayment Due Date:</strong> <span id="repaymentDue"></span></p>
 
     <div class="repayment-bar">
-      <div class="repayment-progress" id="repaymentProgress"></div>
+      <button onclick="openPaymentModal()">Pay Now</button>
+      
+<button id="withdrawBtn" onclick="requestWithdrawal()">Withdraw Loan</button>
+<p id="withdrawStatus"></p>
     </div>
 
     <button onclick="openPaymentModal()">Pay Now</button>
