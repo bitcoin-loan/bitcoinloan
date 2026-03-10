@@ -7,6 +7,16 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  
+<script>
+  // ✅ Redirect logged-in users immediately
+  window.addEventListener('load', () => {
+    if (localStorage.getItem('loggedIn') === 'true') {
+      window.location.href = 'dashboard.html';
+    }
+  });
+</script>
+  
 <section class="auth-container">
   <h1>Login</h1>
   <form id="loginForm">
