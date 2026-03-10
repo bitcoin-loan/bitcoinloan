@@ -21,9 +21,25 @@
 <img src="images/logo.png" class="logo">
 </header>
 
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <img src="images/logo.png" alt="QuickBTC Logo" class="dashboard-logo">
+  </header>
 
-<!-- DASHBOARD -->
-<section class="dashboard">
+  <section class="loan-summary">
+    <h2>Loan Summary</h2>
+    <p><strong>Total Loan:</strong> $<span id="loanAmount"></span></p>
+    <p><strong>Collateral Paid:</strong> $<span id="collateralPaid"></span></p>
+    <p><strong>Remaining Balance:</strong> $<span id="remainingLoan"></span></p>
+    <p><strong>BTC Equivalent:</strong> <span id="btcEquivalent"></span> BTC <img src="images/btc.png" alt="BTC" width="20"></p>
+    <p><strong>Repayment Due Date:</strong> <span id="repaymentDue"></span></p>
+  </section>
+
+  <section class="qr-section">
+    <h3>Scan to Pay</h3>
+    <img src="images/qr.png" alt="Payment QR Code" width="150">
+  </section>
+</div>
 
 <!-- BILLBOARD BALANCE -->
 <div class="balance-box">
