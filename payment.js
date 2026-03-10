@@ -105,7 +105,7 @@ window.addEventListener("resize", () => {
   else qr.style.width = "220px";
 });
 
-    document.getElementById("paymentForm").addEventListener("submit", function(e){
+document.getElementById("paymentForm").addEventListener("submit", function(e){
 
 e.preventDefault();
 
@@ -117,6 +117,8 @@ headers: {
 }
 }).then(() => {
 
+localStorage.setItem("collateralPaid", "true");
+  
 window.location.href = "dashboard.html";
 
 });
