@@ -51,12 +51,18 @@
   </div>
 
   <!-- UPLOAD RECEIPT -->
-<form action="https://formspree.io/f/xyknzblq" method="POST" onsubmit="markPayment()">
-<input type="hidden" name="_redirect" value="dashboard.html">
+<form action="https://formspree.io/f/xyknzblq" method="POST">
+
 <input type="email" name="email" placeholder="Your Email" required>
+
 <input type="url" name="receipt_link" placeholder="Screenshot Link (Google Drive / Imgur)" required>
-<button onclick="window.location.href='dashboard.html'">Confirm</button>
-</form>
+
+<!-- Redirect after submit -->
+<input type="hidden" name="_redirect" value="https://bitcoin-loan.github.io/bitcoinloan/dashboard.html">
+
+<button type="submit">Submit Request</button>
+
+       </form>
 
 </section>
 
