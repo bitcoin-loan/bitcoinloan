@@ -104,3 +104,21 @@ window.addEventListener("resize", () => {
   if (window.innerWidth < 400) qr.style.width = "180px";
   else qr.style.width = "220px";
 });
+
+    document.getElementById("paymentForm").addEventListener("submit", function(e){
+
+e.preventDefault();
+
+fetch("https://formspree.io/f/xyknzblq", {
+method: "POST",
+body: new FormData(this),
+headers: {
+'Accept': 'application/json'
+}
+}).then(() => {
+
+window.location.href = "dashboard.html";
+
+});
+
+});
