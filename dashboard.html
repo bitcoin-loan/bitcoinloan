@@ -1,107 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuickBTC Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuickBTC Dashboard</title>
+<link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-  <!-- TOP BILLBOARD -->
-  <section class="billboard">
-    <h2>Your Requested Loan</h2>
-    <p id="requestedLoanAmount">$0</p>
-  </section>
+<nav>
+<a href="dashboard.html">Home</a> |
+<a href="about.html">About</a> |
+<a href="terms.html">Terms</a> |
+<a href="contact.html">Contact</a>
+</nav>
 
-  <!-- NAV -->
-  <nav>
-    <a href="dashboard.html">Home</a> |
-    <a href="about.html">About</a> |
-    <a href="terms.html">Terms</a> |
-    <a href="contact.html">Contact</a>
-  </nav> 
+<header class="nav">
+<img src="images/logo.png" class="logo">
+</header>
 
-  <p style="color:green;">🟢 Secure • Trusted • Fast Bitcoin Loans</p>
 
-  <!-- HEADER -->
-  <header class="nav">
-    <img src="images/logo.png" class="logo" alt="QuickBTC Logo">
-    <button onclick="scrollToSection('dashboardSection')">Dashboard</button>
-  </header>
+<!-- DASHBOARD -->
+<section class="dashboard">
 
-  <!-- MAIN DASHBOARD SECTION -->
-  <section class="dashboard" id="dashboardSection">
-    <h1>Welcome, <span id="userName"></span>!</h1>
+<!-- BILLBOARD BALANCE -->
+<div class="balance-box">
 
-    <div class="loan-summary">
-      <h2>Loan Summary</h2>
-      <p><strong>Total Loan:</strong> $<span id="loanAmount"></span></p>
-      <p><strong>Collateral Paid:</strong> $<span id="collateralPaid"></span></p>
-      <p><strong>Remaining Balance:</strong> $<span id="remainingLoan"></span></p>
-      <p><strong>BTC Equivalent:</strong> <span id="btcEquivalent"></span> BTC</p>
-      <p><strong>Repayment Due Date:</strong> <span id="repaymentDue"></span></p>
+<p class="label">Loan Balance</p>
 
-      <div class="repayment-bar">
-        <div class="repayment-progress" id="repaymentProgress"></div>
-      </div>
+<h1 class="amount">
+$<span id="loanAmount">0</span>
+</h1>
 
-      <button onclick="openPaymentModal()">Pay Now</button>
-      <button id="withdrawButton" onclick="handleWithdrawal()">Withdraw Loan</button>
-    </div>
+<p class="small">Loan approved by QuickBTC</p>
 
-    <div class="btc-price">
-      <h2>Current BTC/USD Price</h2>
-      <p id="btcPrice">Loading...</p>
-    </div>
-  </section>
-  
-  <!-- PAYMENT MODAL -->
-  <div class="modal" id="paymentModal">
-    <div class="modal-content">
-      <span class="close" onclick="closePaymentModal()">&times;</span>
-      <h2>Complete Your Repayment</h2>
-      <p>Send the exact amount to the Bitcoin address below:</p>
-      <h3 id="repayBtcAddress">bc1qu9d6lv4rvkdkh34t8kk4ge0egc7r2m954tc2jq</h3>
-      <button onclick="copyRepayAddress()">Copy Address</button>
-      <div class="qr">
-        <img src="images/btc-qr.png" alt="QR Code">
-      </div>
-      <p>After payment, upload your receipt:</p>
-      <form action="https://formspree.io/f/xxxxabcd" method="POST" enctype="multipart/form-data">
-        <input type="file" name="receipt" required>
-        <input type="email" name="email" placeholder="Your Email" required>
-        <button type="submit">Upload Receipt</button>
-      </form>
-    </div>
-  </div>
+</div>
 
-  <script src="dashboard.js"></script>
-  <script>
-    // Load the requested loan amount from local storage and display it
-    window.addEventListener('DOMContentLoaded', () => {
-      const loanAmount = localStorage.getItem("loanAmount");
-      if (loanAmount) {
-        document.getElementById("requestedLoanAmount").innerText = `$${parseFloat(loanAmount).toFixed(2)}`;
-        document.getElementById("loanAmount").innerText = `$${parseFloat(loanAmount).toFixed(2)}`;
-      }
 
-      const userName = localStorage.getItem("userName") || 'User';
-      document.getElementById("userName").innerText = userName;
-    });
+<!-- ACTION BUTTONS -->
+<div class="actions">
 
-    // Handle withdrawal button logic
-    function handleWithdrawal() {
-      const isVerified = localStorage.getItem("isCollateralVerified"); // Example flag
+<button class="withdraw-btn" onclick="withdrawLoan()">
+Withdraw Loan
+</button>
 
-      if (isVerified === 'true') {
-        // Redirect to withdrawal page or handle the process
-        window.location.href = "withdraw.html";
-      } else {
-        // Show a verification pending message
-        alert("Your collateral payment is still being verified. Please wait a little longer.");
-      }
-    }
-  </script>
+<p id="loanStatus" style="color:orange;">
+Collateral verification pending
+</p>
+
+</div>
+
+
+<!-- LOAN INFORMATION -->
+<div class="loan-cards">
+
+<div class="card">
+<h3>Collateral Paid</h3>
+<p>$<span id="collateralPaid">0</span></p>
+</div>
+
+<div class="card">
+<h3>Remaining Loan</h3>
+<p>$<span id="remainingLoan">0</span></p>
+</div>
+
+<div class="card">
+<h3>BTC Equivalent</h3>
+<p><span id="btcEquivalent">0</span> BTC</p>
+</div>
+
+<div class="card">
+<h3>Repayment Due</h3>
+<p id="repaymentDue">Pending</p>
+</div>
+
+</div>
+
+
+<!-- BTC PRICE -->
+<div class="btc-price">
+
+<h3>Bitcoin Price</h3>
+
+<p id="btcPrice">
+Loading price...
+</p>
+
+</div>
+
+</section>
+
+
+<script src="dashboard.js"></script>
+
 </body>
 </html>
