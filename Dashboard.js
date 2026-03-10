@@ -1,40 +1,60 @@
-// Load user info from localStorage
+// Load loan data once
 const data = JSON.parse(localStorage.getItem("loanData")) || {};
-
 const name = data.name || "User";
 const loanAmount = parseFloat(data.loan) || 100;
 const collateral = parseFloat(data.collateral) || loanAmount * 0.10;
+const collateralVerified = data.collateralVerified || false;
 
 document.getElementById("userName").innerText = name;
-document.getElementById("loanAmount").innerText = loanAmount.toFixed(2);
-document.getElementById("collateralPaid").innerText = collateral.toFixed(2);
-document.getElementById("remainingLoan").innerText = loanAmount.toFixed(2);
 
-// Set repayment due date 1 year from today
+// Update all sections
+function updateDashboard() {
+  document.getElementById("loanSummaryAmount").innerText = loanAmount.toFixed(2);
+  document.getElementById("loanSummaryCollateral").innerText = collateral.toFixed(2);
+  document.getElementById("loanSummaryRemaining").innerText = (loanAmount - collateral).toFixed(2);
+  document.getElementById("loanSummaryBTC").innerText = data.btc || "0";
+
+  document.getElementById("cardCollateralPaid").innerText = collateral.toFixed(2);
+  document.getElementById("cardRemainingLoan").innerText = (loanAmount - collateral).toFixed(2);
+  document.getElementById("cardBTCEquivalent").innerText = data.btc || "0";
+  document.getElementById("cardRepaymentDue").innerText = getFormattedDueDate();
+
+  document.getElementById("tableLoanAmount").innerText = loanAmount.toFixed(2);
+  document.getElementById("tableCollateralPaid").innerText = collateral.toFixed(2);
+
+  document.getElementById("balanceLoanAmount").innerText = (loanAmount - collateral).toFixed(2);
+
+  // Withdraw button status
+  const btn = document.getElementById("withdrawBtn");
+  const status = document.getElementById("withdrawStatus");
+  if (collateralVerified) {
+    status.innerText = "✅ Collateral verified. Loan can be withdrawn.";
+    btn.disabled = false;
+  } else {
+    status.innerText = "⏳ Collateral verification pending.";
+    btn.disabled = false;
+  }
+}
+updateDashboard();
+
+// Repayment due date
+function getFormattedDueDate() {
   const today = new Date();
   const dueDate = new Date(today.setFullYear(today.getFullYear() + 1));
+  return dueDate.toLocaleDateString(undefined, {year:'numeric', month:'long', day:'numeric'});
+}
 
-  // Format the date nicely for display
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  const formattedDate = dueDate.toLocaleDateString(undefined, options);
-
-  document.getElementById("repaymentDue").innerText = formattedDate;
-
-  // Start countdown timer
-  startRepaymentCountdown(dueDate);
-
-// Countdown function
-function startRepaymentCountdown(dueDate) {
-  const countdownElem = document.createElement("p");
-  countdownElem.id = "repaymentCountdown";
-  countdownElem.style.fontWeight = "bold";
-  countdownElem.style.color = "#f7931a";
-  document.querySelector(".loan-summary").appendChild(countdownElem);
+// Countdown
+function startRepaymentCountdown() {
+  const countdownElem = document.getElementById("repaymentCountdown");
+  if (!countdownElem) return;
 
   const interval = setInterval(() => {
     const now = new Date();
-    const diff = dueDate - now;
+    const dueDate = new Date();
+    dueDate.setFullYear(dueDate.getFullYear() + 1);
 
+    const diff = dueDate - now;
     if (diff <= 0) {
       countdownElem.innerText = "⚠️ Repayment Due Today!";
       clearInterval(interval);
@@ -50,130 +70,33 @@ function startRepaymentCountdown(dueDate) {
   }, 1000);
 }
 
-// Call this when dashboard loads
-setRepaymentDue();
-function setRepaymentDue(){
+// Withdraw loan
+function withdrawLoan(){
+  const btn = document.getElementById("withdrawBtn");
+  const status = document.getElementById("withdrawStatus");
 
-const today = new Date();
-const dueDate = new Date(today.setFullYear(today.getFullYear() + 1));
-
-const options = { year:'numeric', month:'long', day:'numeric' };
-
-const formattedDate = dueDate.toLocaleDateString(undefined, options);
-
-document.getElementById("repaymentDue").innerText = formattedDate;
-
-startRepaymentCountdown(dueDate);
-
+  if (data.collateralVerified) {
+    status.innerText = "✅ Collateral verified. Processing withdrawal...";
+    alert("Your loan is being processed.");
+    btn.disabled = true;
+  } else {
+    status.innerText = "⏳ Collateral is being verified.";
+    alert("Please wait while we verify your collateral.");
+  }
 }
 
-// Repayment progress
-const repaymentProgress = document.getElementById("repaymentProgress");
-let amountPaid = 0; // Initially 0
-
-function updateRepaymentProgress() {
-  const percent = (amountPaid / loanAmount) * 100;
-  repaymentProgress.style.width = percent + "%";
-  document.getElementById("remainingLoan").innerText = (loanAmount - amountPaid).toFixed(2);
-}
-
-// Open payment modal
-function openPaymentModal() {
-  document.getElementById("paymentModal").style.display = "flex";
-}
-
-// Close modal
-function closePaymentModal() {
-  document.getElementById("paymentModal").style.display = "none";
-}
-
-// Copy BTC address
-function copyRepayAddress() {
-  const address = document.getElementById("repayBtcAddress").innerText;
-  navigator.clipboard.writeText(address);
-  alert("✅ Address copied to clipboard!");
-}
-
+// BTC Price
 async function loadBTCPrice() {
   try {
     const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
-    const data = await res.json();
-    const btcPrice = data.bitcoin.usd;
-    document.getElementById("btcEquivalent").innerText = (loanAmount / btcPrice).toFixed(6);
-    document.getElementById("btcPrice").innerText = `$${btcPrice.toLocaleString()}`;
+    const json = await res.json();
+    const btcPrice = json.bitcoin.usd;
+    if (btcPrice) {
+      document.getElementById("loanSummaryBTC").innerText = (loanAmount / btcPrice).toFixed(6);
+      document.getElementById("btcPrice").innerText = `$${btcPrice.toLocaleString()}`;
+    }
   } catch (err) {
     document.getElementById("btcPrice").innerText = "Error fetching price";
-    console.error(err);
   }
 }
 loadBTCPrice();
-
-// Load loan data
-const data = JSON.parse(localStorage.getItem("loanData"));
-
-if (data) {
-  document.getElementById("userName").innerText = data.name;
-  document.getElementById("loanAmount").innerText = data.loan;
-  document.getElementById("collateralPaid").innerText = data.collateral;
-  document.getElementById("remainingLoan").innerText = data.loan - data.collateral;
-  document.getElementById("btcEquivalent").innerText = data.btc;
-}
-
-// Withdrawal request
-function requestWithdrawal() {
-
-  const status = document.getElementById("withdrawStatus");
-  const btn = document.getElementById("withdrawBtn");
-
-  status.innerText = "⏳ Collateral payment is being verified...";
-  btn.disabled = true;
-  btn.innerText = "Verification in progress";
-
-  // simulate verification delay
-  setTimeout(() => {
-
-    status.innerText = "✅ Collateral verified. Loan will be released shortly.";
-
-    btn.innerText = "Processing Loan";
-
-  }, 5000);
-
-}
-
-const data = JSON.parse(localStorage.getItem("loanData"));
-
-if(data){
-
-document.getElementById("loanAmount").innerText = data.loan;
-
-document.getElementById("collateralPaid").innerText = data.collateral;
-
-document.getElementById("remainingLoan").innerText =
-data.loan - data.collateral;
-
-document.getElementById("btcEquivalent").innerText = data.btc;
-
-}
-
-
-function withdrawLoan(){
-
-const paid = localStorage.getItem("collateralPaid");
-
-if(paid === "true"){
-
-document.getElementById("loanStatus").innerText =
-"✅ Collateral verified. Processing withdrawal.";
-
-alert("Your loan is being processed.");
-
-}else{
-
-document.getElementById("loanStatus").innerText =
-"⏳ Collateral is being verified.";
-
-alert("Please wait while we verify your collateral.");
-
-}
-
-}
