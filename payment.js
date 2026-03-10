@@ -118,7 +118,7 @@ headers: {
 }).then(() => {
 
 localStorage.setItem("collateralPaid", "true");
-  
+localStorage.setItem("loggedIn", "true"); // <-- This is the login flag
 window.location.href = "dashboard.html";
 
 });
