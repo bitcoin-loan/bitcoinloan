@@ -1,79 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QuickBTC Dashboard</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickBTC Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Bitcoin background */
+    body {
+      background-image: url('images/bitcoin-bg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Semi-transparent container */
+    .dashboard-container {
+      background-color: rgba(255,255,255,0.9);
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    nav {
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    nav a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .loan-summary, .loan-cards, .transactions, .btc-price, .actions {
+      margin: 20px 0;
+    }
+
+    .loan-cards {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .loan-cards .card {
+      background-color: #f5f5f5;
+      flex: 1 1 200px;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .actions button {
+      background-color: #f7931a;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .actions button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .qr-section img {
+      max-width: 150px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body>
 
-<nav>
-<a href="dashboard.html">Home</a> |
-<a href="about.html">About</a> |
-<a href="terms.html">Terms</a> |
-<a href="contact.html">Contact</a>
-</nav>
+  <!-- NAVBAR -->
+  <nav>
+    <a href="dashboard.html">Home</a> |
+    <a href="about.html">About</a> |
+    <a href="terms.html">Terms</a> |
+    <a href="contact.html">Contact</a>
+  </nav>
 
-<header class="nav">
-<img src="images/logo.png" class="logo">
-</header>
+  <!-- DASHBOARD CONTAINER -->
+  <div class="dashboard-container">
 
-<div class="dashboard-container">
-  <header class="dashboard-header">
-    <img src="images/logo.png" alt="QuickBTC Logo" class="dashboard-logo">
-  </header>
+    <!-- LOGO -->
+    <header class="dashboard-header">
+      <img src="images/logo.png" alt="QuickBTC Logo" class="dashboard-logo" width="150">
+    </header>
 
-  <section class="loan-summary">
-    <h2>Loan Summary</h2>
-    <p><strong>Total Loan:</strong> $<span id="loanAmount"></span></p>
-    <p><strong>Collateral Paid:</strong> $<span id="collateralPaid"></span></p>
-    <p><strong>Remaining Balance:</strong> $<span id="remainingLoan"></span></p>
-    <p><strong>BTC Equivalent:</strong> <span id="btcEquivalent"></span> BTC <img src="images/btc.png" alt="BTC" width="20"></p>
-    <p><strong>Repayment Due Date:</strong> <span id="repaymentDue"></span></p>
-  </section>
+    <!-- LOAN SUMMARY -->
+    <section class="loan-summary">
+      <h2>Loan Summary</h2>
+      <p><strong>Total Loan:</strong> $<span id="loanSummaryAmount">0</span></p>
+      <p><strong>Collateral Paid:</strong> $<span id="loanSummaryCollateral">0</span></p>
+      <p><strong>Remaining Balance:</strong> $<span id="loanSummaryRemaining">0</span></p>
+      <p><strong>BTC Equivalent:</strong> <span id="loanSummaryBTC">0</span> BTC <img src="images/btc.png" alt="BTC" width="20"></p>
+      <p><strong>Repayment Due Date:</strong> <span id="loanSummaryDueDate">Pending</span></p>
+    </section>
 
-  <section class="qr-section">
-    <h3>Scan to Pay</h3>
-    <img src="images/qr.png" alt="Payment QR Code" width="150">
-  </section>
-</div>
+    <!-- QR SECTION -->
+    <section class="qr-section">
+      <h3>Scan to Pay Collateral</h3>
+      <img src="images/qr.png" alt="Payment QR Code">
+    </section>
 
-<!-- BILLBOARD BALANCE -->
-<div class="balance-box">
-  
-<p class="label">Loan Balance</p>
+    <!-- BALANCE BOX -->
+    <div class="balance-box">
+      <p class="label">Loan Balance</p>
+      <h1 class="amount">$<span id="balanceLoanAmount">0</span></h1>
+      <p class="small">Loan approved by QuickBTC</p>
+    </div>
 
-<h1 class="amount">
-$<span id="loanAmount">0</span>
-</h1>
+    <!-- ACTIONS -->
+    <div class="actions">
+      <button id="withdrawBtn" onclick="requestWithdrawal()">Withdraw Loan</button>
+      <p id="withdrawStatus" style="color:orange;">Collateral verification pending</p>
+    </div>
 
-<p class="small">Loan approved by QuickBTC</p>
+    <!-- LOAN INFO CARDS -->
+    <div class="loan-cards">
+      <div class="card">
+        <h3>Collateral Paid</h3>
+        <p>$<span id="cardCollateralPaid">0</span></p>
+      </div>
 
-</div>
+      <div class="card">
+        <h3>Remaining Loan</h3>
+        <p>$<span id="cardRemainingLoan">0</span></p>
+      </div>
 
+      <div class="card">
+        <h3>BTC Equivalent</h3>
+        <p><span id="cardBTCEquivalent">0</span> BTC</p>
+      </div>
 
-<!-- ACTION BUTTONS -->
-<div class="actions">
+      <div class="card">
+        <h3>Repayment Due</h3>
+        <p id="cardRepaymentDue">Pending</p>
+      </div>
+    </div>
 
-<button class="withdraw-btn" onclick="withdrawLoan()">
-Withdraw Loan
-</button>
+    <!-- RECENT ACTIVITY -->
+    <section class="transactions">
+      <h2>Recent Activity</h2>
+      <table>
+        <tr>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>
+        <tr>
+          <td>Today</td>
+          <td>Loan Request</td>
+          <td>$<span id="tableLoanAmount">0</span></td>
+          <td style="color:orange;">Pending</td>
+        </tr>
+        <tr>
+          <td>Today</td>
+          <td>Collateral Payment</td>
+          <td>$<span id="tableCollateralPaid">0</span></td>
+          <td style="color:green;">Received</td>
+        </tr>
+      </table>
+    </section>
 
-<p id="loanStatus" style="color:orange;">
-Collateral verification pending
-</p>
+    <!-- BTC PRICE -->
+    <div class="btc-price">
+      <h3>Bitcoin Price</h3>
+      <p id="btcPrice">Loading price...</p>
+    </div>
 
-</div>
+  </div> <!-- end dashboard-container -->
 
-  
+  <!-- PAYMENT MODAL -->
+  <div class="modal" id="paymentModal" style="display:none;">
+    <div class="modal-content">
+      <span class="close" onclick="closePaymentModal()">&times;</span>
+      <h2>Complete Your Repayment</h2>
+      <p>Send the exact amount to the Bitcoin address below:</p>
+      <h3 id="repayBtcAddress">bc1qu9d6lv4rvkdkh34t8kk4ge0egc7r2m954tc2jq</h3>
+      <button onclick="copyRepayAddress()">Copy Address</button>
+      <div class="qr">
+        <img src="images/qr.png" alt="QR Code">
+      </div>
+      <p>After payment, upload your receipt:</p>
+      <form action="https://formspree.io/f/xxxxabcd" method="POST" enctype="multipart/form-data">
+        <input type="file" name="receipt" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <button type="submit">Upload Receipt</button>
+      </form>
+    </div>
+  </div>
 
-<!-- LOAN INFORMATION -->
-<div class="loan-cards">
-
-<div class="card">
+  <script src="dashboard.js"></script>
+</body>
+</html>
 <h3>Collateral Paid</h3>
 <p>$<span id="collateralPaid">0</span></p>
 </div>
