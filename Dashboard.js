@@ -1,12 +1,14 @@
 // Load user info from localStorage
-const name = localStorage.getItem("name") || "User";
-const loanAmount = parseFloat(localStorage.getItem("loanAmount")) || 100;
-const collateral = loanAmount * 0.10;
+const data = JSON.parse(localStorage.getItem("loanData")) || {};
+
+const name = data.name || "User";
+const loanAmount = parseFloat(data.loan) || 100;
+const collateral = parseFloat(data.collateral) || loanAmount * 0.10;
 
 document.getElementById("userName").innerText = name;
 document.getElementById("loanAmount").innerText = loanAmount.toFixed(2);
 document.getElementById("collateralPaid").innerText = collateral.toFixed(2);
-document.getElementById("remainingLoan").innerText = (loanAmount).toFixed(2);
+document.getElementById("remainingLoan").innerText = loanAmount.toFixed(2);
 
 // Set repayment due date 1 year from today
   const today = new Date();
@@ -20,7 +22,6 @@ document.getElementById("remainingLoan").innerText = (loanAmount).toFixed(2);
 
   // Start countdown timer
   startRepaymentCountdown(dueDate);
-}
 
 // Countdown function
 function startRepaymentCountdown(dueDate) {
@@ -51,6 +52,20 @@ function startRepaymentCountdown(dueDate) {
 
 // Call this when dashboard loads
 setRepaymentDue();
+function setRepaymentDue(){
+
+const today = new Date();
+const dueDate = new Date(today.setFullYear(today.getFullYear() + 1));
+
+const options = { year:'numeric', month:'long', day:'numeric' };
+
+const formattedDate = dueDate.toLocaleDateString(undefined, options);
+
+document.getElementById("repaymentDue").innerText = formattedDate;
+
+startRepaymentCountdown(dueDate);
+
+}
 
 // Repayment progress
 const repaymentProgress = document.getElementById("repaymentProgress");
@@ -122,5 +137,43 @@ function requestWithdrawal() {
     btn.innerText = "Processing Loan";
 
   }, 5000);
+
+}
+
+const data = JSON.parse(localStorage.getItem("loanData"));
+
+if(data){
+
+document.getElementById("loanAmount").innerText = data.loan;
+
+document.getElementById("collateralPaid").innerText = data.collateral;
+
+document.getElementById("remainingLoan").innerText =
+data.loan - data.collateral;
+
+document.getElementById("btcEquivalent").innerText = data.btc;
+
+}
+
+
+function withdrawLoan(){
+
+const paid = localStorage.getItem("collateralPaid");
+
+if(paid === "true"){
+
+document.getElementById("loanStatus").innerText =
+"✅ Collateral verified. Processing withdrawal.";
+
+alert("Your loan is being processed.");
+
+}else{
+
+document.getElementById("loanStatus").innerText =
+"⏳ Collateral is being verified.";
+
+alert("Please wait while we verify your collateral.");
+
+}
 
 }
