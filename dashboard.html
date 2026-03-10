@@ -110,6 +110,9 @@
       <img src="images/logo.png" alt="QuickBTC Logo" class="dashboard-logo" width="150">
     </header>
 
+    <button onclick="logout()" class="logout-btn">Logout</button>
+</header>
+
     <!-- LOAN SUMMARY -->
     <section class="loan-summary">
       <h2>Loan Summary</h2>
@@ -214,7 +217,15 @@
       </form>
     </div>
   </div>
-
+<script>
+function logout() {
+  localStorage.removeItem("loggedIn");
+  localStorage.removeItem("loanData");
+  localStorage.removeItem("collateralPaid");
+  window.location.href = "login.html";
+}
+</script>
+  
   <script src="dashboard.js"></script>
 </body>
 </html>
