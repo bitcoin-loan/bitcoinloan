@@ -467,6 +467,35 @@ form button:hover {
   background: #fbb03b;
 }
 
+/* Full page background */
+body {
+  background-image: url('images/bitcoin-bg.jpg'); /* path to your image */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  font-family: Arial, sans-serif;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+
+/* Dashboard container */
+.dashboard-container {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.85);
+  color: #000000;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+
+/* Images */
+img {
+  display: block;
+  margin: 0 auto;
+}
+
 /* ---------------- RESPONSIVE ---------------- */
 @media (max-width: 768px) {
   .step-box { flex-direction: column; gap: 30px; }
