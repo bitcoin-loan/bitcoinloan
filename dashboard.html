@@ -21,8 +21,7 @@
   <a href="#" style="margin:0 10px; color:white; text-decoration:none;">Contact Care</a>
 
   <!-- ADMIN BUTTON -->
-  <a href="admin.html" class="btn btn-warning" style="margin:0 10px;">
-    Admin Panel
+  <a href="admin.html" class="btn btn-warning">
   </a>
     <button onclick="logout()" style="margin:0 10px; background:red; color:white; border:none; padding:5px 10px; border-radius:5px;">
   Logout
@@ -41,7 +40,6 @@
   <p>Manage your loan, collateral and repayment easily.</p>
 
   <button class="btn btn-primary" onclick="applyLoan()">Apply Loan</button>
-</button>
 
 </div>
 
@@ -180,7 +178,6 @@ function showFields() {
    </script>
 <script>
 async function submitWithdraw() {
-
   const user = nhost.auth.getUser();
 
   if (!user) {
@@ -195,23 +192,11 @@ async function submitWithdraw() {
     return;
   }
 
-  const query = `
-    mutation {
-      insert_transactions(objects: {
-        user_id: "${user.id}",
-        type: "withdraw",
-        amount: 0,
-        status: "pending"
-      }) {
-        affected_rows
-      }
-    }
-  `;
-
-  await nhost.graphql.request(query);
-
-  alert("Withdrawal submitted");
-}
+  let withdrawalData = {
+    method,
+    userId: user.id,
+    time: new Date().toISOString()
+  };
 
   // BANK
   if (method === "bank") {
@@ -230,23 +215,34 @@ async function submitWithdraw() {
     withdrawalData.paypal = document.getElementById("paypalEmail").value;
   }
 
-  // validation
+  // VALIDATION
   for (let key in withdrawalData) {
-    if (withdrawalData[key] === "" || withdrawalData[key] === undefined) {
-      if (key !== "status" && key !== "time") {
-        alert("Please fill all required fields");
-        return;
-      }
+    if (!withdrawalData[key]) {
+      alert("Fill all fields");
+      return;
     }
   }
 
-  localStorage.setItem("quickbtcWithdrawal", JSON.stringify(withdrawalData));
+  // SAVE (temporary)
+  
 
-  data.status = "Disbursed";
-  localStorage.setItem("quickbtcLoan", JSON.stringify(data));
+  // DATABASE
+  const query = `
+    mutation {
+      insert_transactions(objects: {
+        user_id: "${user.id}",
+        type: "withdraw",
+        amount: 0,
+        status: "pending"
+      }) {
+        affected_rows
+      }
+    }
+  `;
 
-  alert("Withdrawal submitted successfully");
+  await nhost.graphql.request(query);
 
+  alert("Withdrawal submitted");
   location.reload();
 }
 </script>
@@ -258,9 +254,9 @@ function showAdminLink() {
     const nav = document.querySelector("div"); // your nav container
 
     nav.innerHTML += `
-      <a href="admin.html" class="btn btn-warning" style="margin:0 10px;">
-        Admin Panel
-      </a>
+     <a id="adminBtn" href="admin.html" class="btn btn-warning" style="display:none;">
+  Admin Panel
+</a>
     `;
   }
 }
@@ -269,30 +265,24 @@ showAdminLink();
 </script>
 <script>
 function addCollateral() {
-  let data = JSON.parse(localStorage.getItem("quickbtcLoan"));
 
-  if (!data) {
-    alert("No loan found");
-    return;
-  }
-
-  // store intent (so payment page knows what to do)
-  localStorage.setItem("pendingAction", "addCollateral");
-
-  // optional: store current collateral + loan data
-  localStorage.setItem("tempLoanData", JSON.stringify(data));
-
-  // redirect to payment page
-  window.location.href = "payment.html";
+  const user = nhost.auth.getUser();
+window.location.href = "payment.html?user=" + user.id;
 }
 </script>
  <script>
 async function repayLoan() {
+  const user = nhost.auth.getUser();
+
+  if (!user) {
+    alert("Login first");
+    return;
+  }
 
   const query = `
     mutation {
       update_loans(
-        where: {},
+        where: { user_id: { _eq: "${user.id}" } },
         _set: { status: "repaid" }
       ) {
         affected_rows
@@ -300,7 +290,13 @@ async function repayLoan() {
     }
   `;
 
-  await nhost.graphql.request(query);
+  const res = await nhost.graphql.request(query);
+
+  if (res.error) {
+    console.error(res.error);
+    alert("Error updating loan");
+    return;
+  }
 
   alert("Loan marked as repaid");
   location.reload();
@@ -329,32 +325,6 @@ async function repayLoan() {
   alert("Withdrawal request sent");
 
   // You can insert transaction here
-}
-</script>
-<script>
-let loanData = JSON.parse(localStorage.getItem("quickbtcLoan"));
-
-if (loanData) {
-
-  // AUTO APPROVE (RUN ONCE)
-  if (loanData.status === "Pending") {
-    loanData.status = "Approved";
-    localStorage.setItem("quickbtcLoan", JSON.stringify(loanData));
-  }
-
-  // DISPLAY STATUS
-  let statusEl = document.getElementById("loanStatus");
-  statusEl.innerText = loanData.status;
-
-  if (loanData.status === "Paid") {
-    statusEl.style.color = "lightgreen";
-  } else if (loanData.status === "Approved") {
-    statusEl.style.color = "cyan";
-  } else if (loanData.status === "Disbursed") {
-    statusEl.style.color = "yellow";
-  } else {
-    statusEl.style.color = "orange";
-  }
 }
 </script>
 
@@ -403,76 +373,47 @@ setInterval(loadBTC, 10000);
   document.getElementById("collateralAmount").innerText = loan.collateral_amount;
   document.getElementById("interestAmount").innerText = interest.toFixed(2);
   document.getElementById("repayAmount").innerText = (loan.amount + interest).toFixed(2);
-  document.getElementById("loanStatus").innerText = loan.status;
+  
 }
 
 loadLoan();
 </script>
-  <script>
-async function checkUser() {
-  const user = nhost.auth.getUser();
-
-  if (!user) {
-    window.location.href = "login.html";
-    return;
-  }
-
-  document.getElementById("userName").innerText = user.email;
-}
-
-checkUser();
-  </script>
  
 <script>
-let repaymentTime = parseInt(localStorage.getItem("repaymentTime"));
-
 function getDurationDays(loan) {
   if (loan < 200) return 30;
   if (loan < 500) return 90;
   return 365;
 }
 
-function startTimer() {
-  let loanData = JSON.parse(localStorage.getItem("quickbtcLoan"));
-let loan = loanData ? loanData.loanAmount : 100;
+function startTimer(loan) {
+  
+  const days = getDurationDays(loan.amount);
+  const endTime = new Date(loan.created_at).getTime() + (days * 86400000);
 
-  let days = getDurationDays(loan);
-  let durationText = document.getElementById("durationText");
+  document.getElementById("durationText").innerText = days + " Days";
 
-  if (durationText) {
-    durationText.innerText = days + " Days";
-  }
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = endTime - now;
 
-  if (!repaymentTime) {
-    let now = new Date().getTime();
-    let durationMs = days * 24 * 60 * 60 * 1000;
-    repaymentTime = now + durationMs;
-    localStorage.setItem("repaymentTime", repaymentTime);
+    if (distance <= 0) {
+      document.getElementById("countdown").innerText = "Expired";
+      return;
+    }
+
+    const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+    document.getElementById("countdown").innerText =
+      `${d}d ${h}h ${m}m ${s}s`;
   }
 
   updateCountdown();
+  setInterval(updateCountdown, 1000);
 }
-
-function updateCountdown() {
-  let now = new Date().getTime();
-  let distance = repaymentTime - now;
-
-  if (distance <= 0) {
-    document.getElementById("countdown").innerText = "⚠️ Time Expired";
-    return;
-  }
-
-  let days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  let seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-  document.getElementById("countdown").innerText =
-    `${days}d ${hours}h ${minutes}m ${seconds}s`;
-}
-
-setInterval(updateCountdown, 1000);
-startTimer();
 </script>
 <script>
 async function loadUser() {
@@ -504,4 +445,4 @@ const nhost = new Nhost.NhostClient({
 });
 </script>
 </body>
-</html>
+  </html>
