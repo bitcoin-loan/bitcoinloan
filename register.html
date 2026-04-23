@@ -51,31 +51,20 @@ async function register() {
   try {
 
     const { error, session, user } = await nhost.auth.signUp({
-      email,
-      password,
-      options: {
-        userMetadata: {
-          displayName: name
-        }
-      }
-    });
+  email,
+  password,
+  options: {
+    displayName: name
+  }
+});
 
-    if (error) {
-      alert("Error: " + error.message);
-      console.error(error);
-      return;
-    }
+if (error) {
+  alert(error.message);
+  return;
+}
 
-    // ⚠️ IMPORTANT: Handle email verification case
-    if (!session) {
-      alert("Check your email to verify your account before logging in.");
-      return;
-    }
-
-    alert("Registration successful!");
-    console.log("User:", user);
-
-    window.location.href = "login.html";
+alert("Check your email to verify account.");
+window.location.href = "login.html";
 
   } catch (err) {
     console.error(err);
