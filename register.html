@@ -34,6 +34,7 @@ const nhost = window.nhost.createClient({
   subdomain: "bodsydvasrwtlkghfyig",
   region: "us-west-2"
 });
+console.log("NHOST:", nhost);
 </script>
 <script>
 async function register() {
@@ -68,8 +69,8 @@ async function register() {
     window.location.href = "login.html";
 
   } catch (err) {
-    console.error(err);
-    alert("Something went wrong");
+  console.error("FULL ERROR:", err);
+  alert(JSON.stringify(err));
   }
 }
 </script>
