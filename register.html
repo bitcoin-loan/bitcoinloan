@@ -39,8 +39,8 @@ console.log("NHOST:", nhost);
 <script>
 async function register() {
 
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
   if (!email || !password) {
@@ -54,23 +54,32 @@ async function register() {
       email,
       password,
       options: {
-        displayName: name   // 👈 THIS IS WHERE IT GOES
+        userMetadata: {
+          displayName: name
+        }
       }
     });
 
     if (error) {
-      alert(error.message);
+      alert("Error: " + error.message);
+      console.error(error);
       return;
     }
 
-    alert("Registration successful");
-    console.log(user);
+    // ⚠️ IMPORTANT: Handle email verification case
+    if (!session) {
+      alert("Check your email to verify your account before logging in.");
+      return;
+    }
+
+    alert("Registration successful!");
+    console.log("User:", user);
 
     window.location.href = "login.html";
 
   } catch (err) {
-  alert("ERROR: " + JSON.stringify(err));
-  document.body.innerHTML += "<pre style='color:red;'>" + JSON.stringify(err, null, 2) + "</pre>";
+    console.error(err);
+    alert("Unexpected error occurred.");
   }
 }
 </script>
