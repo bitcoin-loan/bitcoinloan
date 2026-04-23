@@ -108,7 +108,12 @@
     Submit Withdrawal
   </button>
 </div>
-
+<script>
+const nhost = new Nhost.NhostClient({
+  subdomain: "bodsydvasrwtlkghfyig",
+  region: "us-west-2"
+});
+</script>
 <script>
 function showFields() {
   let method = document.getElementById("withdrawMethod").value;
@@ -355,6 +360,7 @@ setInterval(loadBTC, 10000);
         amount
         collateral_amount
         status
+        created_at
       }
     }
   `;
@@ -373,32 +379,32 @@ setInterval(loadBTC, 10000);
   document.getElementById("collateralAmount").innerText = loan.collateral_amount;
   document.getElementById("interestAmount").innerText = interest.toFixed(2);
   document.getElementById("repayAmount").innerText = (loan.amount + interest).toFixed(2);
-  
-}
 
-loadLoan();
+  // ✅ THIS WAS MISSING
+  startTimer(loan);
+}
 </script>
  
 <script>
-function getDurationDays(loan) {
-  if (loan < 200) return 30;
-  if (loan < 500) return 90;
-  return 365;
-}
+let countdownInterval;
 
 function startTimer(loan) {
-  
+  if (!loan || !loan.created_at) return;
+
   const days = getDurationDays(loan.amount);
   const endTime = new Date(loan.created_at).getTime() + (days * 86400000);
 
   document.getElementById("durationText").innerText = days + " Days";
 
+  clearInterval(countdownInterval);
+
   function updateCountdown() {
-    const now = new Date().getTime();
+    const now = Date.now();
     const distance = endTime - now;
 
     if (distance <= 0) {
       document.getElementById("countdown").innerText = "Expired";
+      clearInterval(countdownInterval);
       return;
     }
 
@@ -412,7 +418,7 @@ function startTimer(loan) {
   }
 
   updateCountdown();
-  setInterval(updateCountdown, 1000);
+  countdownInterval = setInterval(updateCountdown, 1000);
 }
 </script>
 <script>
@@ -437,12 +443,6 @@ async function logout() {
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@2.6.1/dist/index.umd.js"></script>
-
-<script>
-const nhost = new Nhost.NhostClient({
-  subdomain: "bodsydvasrwtlkghfyig",
-  region: "us-west-2"
-});
-</script>
+  
 </body>
   </html>
