@@ -28,13 +28,50 @@
 </a>
 
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://unpkg.com/@nhost/nhost-js"></script>
+  <script>
+const nhost = new Nhost.NhostClient({
+  subdomain: "YOUR_SUBDOMAIN",
+  region: "YOUR_REGION"
+});
+  </script>
+  
+ <script>
+async function login() {
 
-<script>
-const supabaseUrl = "https://dntcbbolfwkaalphxotw.supabase.co";
-const supabaseKey = "sb_publishable_Bc25pHX_aamO4fOfLh_D9w__kwNvMoo";
+  const email = document.getElementById("email")?.value;
+  const password = document.getElementById("password")?.value;
+  const msg = document.getElementById("msg");
 
-const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-</script>
+  if (!email || !password) {
+    msg.innerText = "Enter email and password";
+    return;
+  }
+
+  msg.innerText = "Logging in...";
+
+  const { session, error } = await nhost.auth.signIn({
+    email: email,
+    password: password
+  });
+
+  if (error) {
+    msg.innerText = error.message;
+  } else {
+    msg.innerText = "Login successful";
+
+    console.log(session);
+
+    // Redirect to dashboard
+    window.location.href = "dashboard.html";
+  }
+}
+  </script>
+  <script>
+if (nhost.auth.isAuthenticated()) {
+  window.location.href = "dashboard.html";
+}
+  </script>
+  
 </body>
 </html>
