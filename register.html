@@ -69,8 +69,8 @@ async function register() {
     window.location.href = "login.html";
 
   } catch (err) {
-  console.error("FULL ERROR:", err);
-  alert(JSON.stringify(err));
+  alert("ERROR: " + JSON.stringify(err));
+  document.body.innerHTML += "<pre style='color:red;'>" + JSON.stringify(err, null, 2) + "</pre>";
   }
 }
 </script>
