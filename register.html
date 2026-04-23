@@ -27,10 +27,9 @@
 </a>
 
 </div>
-<script src="https://unpkg.com/@nhost/nhost-js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@latest/dist/index.umd.js"></script>
 <script>
-const nhost = new Nhost.NhostClient({
+const nhost = new nhostJs.NhostClient({
   subdomain: "bodsydvasrwtlkghfyig",
   region: "us-west-2"
 });
@@ -38,31 +37,37 @@ const nhost = new Nhost.NhostClient({
 <script>
 async function register() {
 
-  const name = document.getElementById("name")?.value;
-  const email = document.getElementById("email")?.value;
-  const password = document.getElementById("password")?.value;
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
   if (!email || !password) {
     alert("Email and password required");
     return;
   }
 
-  const { session, error } = await nhost.auth.signUp({
-    email: email,
-    password: password
-  });
+  try {
+    const result = await nhost.auth.signUp({
+      email,
+      password
+    });
 
-  if (error) {
-    alert(error.message);
-  } else {
+    if (result.error) {
+      alert(result.error.message);
+      return;
+    }
+
     alert("Registration successful");
 
-    console.log(session);
+    console.log(result);
 
-    // Optional: redirect
     window.location.href = "login.html";
+
+  } catch (err) {
+    console.error(err);
+    alert("Something went wrong. Check console.");
   }
 }
-    </script>
+</script>
 </body>
 </html>
