@@ -1,0 +1,115 @@
+<!DOCTYPE html><html>
+<head>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="css/bootstrap.css">
+</head><body style="background:#0f172a; color:white;"><div class="container" style="padding:30px;">  <h1>Admin Panel</h1>
+  <p>Manage all loan requests</p>  <table class="table table-dark">
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>Amount</th>
+        <th>Collateral</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead><tbody id="loanTable"></tbody>
+
+  </table></div><script src="https://unpkg.com/@nhost/nhost-js"></script><script>
+const nhost = new Nhost.NhostClient({
+  subdomain: "YOUR_SUBDOMAIN",
+  region: "YOUR_REGION"
+});
+
+// 🔐 Check admin
+async function checkAdmin() {
+  const user = nhost.auth.getUser();
+
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  if (user.metadata?.role !== "admin") {
+    alert("Access denied");
+    window.location.href = "dashboard.html";
+  }
+}
+
+// 📥 Load all loans
+async function loadLoans() {
+
+  const query = `
+    query {
+      loans {
+        id
+        user_id
+        amount
+        collateral_amount
+        status
+      }
+    }
+  `;
+
+  const res = await nhost.graphql.request(query);
+
+  const table = document.getElementById("loanTable");
+  table.innerHTML = "";
+
+  res.data.loans.forEach(loan => {
+
+    table.innerHTML += `
+      <tr>
+        <td>${loan.user_id}</td>
+        <td>$${loan.amount}</td>
+        <td>$${loan.collateral_amount}</td>
+        <td>${loan.status}</td>
+        <td>
+          <button onclick="approveLoan('${loan.id}')" class="btn btn-success btn-sm">Approve</button>
+          <button onclick="rejectLoan('${loan.id}')" class="btn btn-danger btn-sm">Reject</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+// ✅ Approve
+async function approveLoan(id) {
+  const query = `
+    mutation {
+      update_loans_by_pk(
+        pk_columns: { id: "${id}" },
+        _set: { status: "approved" }
+      ) {
+        id
+      }
+    }
+  `;
+
+  await nhost.graphql.request(query);
+  alert("Loan approved");
+  loadLoans();
+}
+
+// ❌ Reject
+async function rejectLoan(id) {
+  const query = `
+    mutation {
+      update_loans_by_pk(
+        pk_columns: { id: "${id}" },
+        _set: { status: "rejected" }
+      ) {
+        id
+      }
+    }
+  `;
+
+  await nhost.graphql.request(query);
+  alert("Loan rejected");
+  loadLoans();
+}
+
+// 🚀 Start
+checkAdmin();
+loadLoans();
+</script></body>
+</html>
