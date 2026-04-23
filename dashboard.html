@@ -251,6 +251,23 @@ async function submitWithdraw() {
   location.reload();
 }
 </script>
+  <script>
+function showAdminLink() {
+  const user = nhost.auth.getUser();
+
+  if (user && user.metadata?.role === "admin") {
+    const nav = document.querySelector("div"); // your nav container
+
+    nav.innerHTML += `
+      <a href="admin.html" class="btn btn-warning" style="margin:0 10px;">
+        Admin Panel
+      </a>
+    `;
+  }
+}
+
+showAdminLink();
+</script>
 <script>
 function addCollateral() {
   let data = JSON.parse(localStorage.getItem("quickbtcLoan"));
