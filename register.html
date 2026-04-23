@@ -27,13 +27,42 @@
 </a>
 
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://unpkg.com/@nhost/nhost-js"></script>
 
 <script>
-const supabaseUrl = "https://dntcbbolfwkaalphxotw.supabase.co";
-const supabaseKey = "sb_publishable_Bc25pHX_aamO4fOfLh_D9w__kwNvMoo";
-
-const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+const nhost = new Nhost.NhostClient({
+  subdomain: "YOUR_SUBDOMAIN",
+  region: "YOUR_REGION"
+});
 </script>
+<script>
+async function register() {
+
+  const name = document.getElementById("name")?.value;
+  const email = document.getElementById("email")?.value;
+  const password = document.getElementById("password")?.value;
+
+  if (!email || !password) {
+    alert("Email and password required");
+    return;
+  }
+
+  const { session, error } = await nhost.auth.signUp({
+    email: email,
+    password: password
+  });
+
+  if (error) {
+    alert(error.message);
+  } else {
+    alert("Registration successful");
+
+    console.log(session);
+
+    // Optional: redirect
+    window.location.href = "login.html";
+  }
+}
+    </script>
 </body>
 </html>
