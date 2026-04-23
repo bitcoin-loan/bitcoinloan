@@ -180,7 +180,6 @@ function showFields() {
    </script>
 <script>
 async function submitWithdraw() {
-async function submitWithdraw() {
 
   const user = nhost.auth.getUser();
 
@@ -496,12 +495,12 @@ async function logout() {
 }
 </script>
 
-<script src="https://unpkg.com/@nhost/nhost-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@2.6.1/dist/index.umd.js"></script>
 
 <script>
 const nhost = new Nhost.NhostClient({
-  subdomain: "us-west-2",
-  region: "bodsydvasrwtlkghfyig"
+  subdomain: "bodsydvasrwtlkghfyig",
+  region: "us-west-2"
 });
 </script>
 </body>
