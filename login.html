@@ -52,10 +52,10 @@ async function login() {
 
   msg.innerText = "Logging in...";
 
-  const { session, error } = await nhost.auth.signIn({
-    email: email,
-    password: password
-  });
+  const { error, session } = await nhost.auth.signIn({
+  email,
+  password
+});
 
   if (error) {
     msg.innerText = error.message;
