@@ -28,8 +28,9 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@nhost/nhost-js@latest/dist/index.umd.js"></script>
+
 <script>
-const nhost = new nhostJs.NhostClient({
+const nhost = window.nhost.createClient({
   subdomain: "bodsydvasrwtlkghfyig",
   region: "us-west-2"
 });
