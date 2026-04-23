@@ -35,8 +35,7 @@
 
   <p>Manage your loan, collateral and repayment easily.</p>
 
-  <button class="btn btn-primary" onclick="window.location.href='signup.html'">
-  Click here to apply loan
+  <button class="btn btn-primary" onclick="applyLoan()">Apply Loan</button>
 </button>
 
 </div>
@@ -142,35 +141,72 @@ function showFields() {
   }
 }
 </script>
-  
+ <script>
+  async function applyLoan() {
+
+  const user = nhost.auth.getUser();
+
+  if (!user) {
+    alert("Login first");
+    return;
+  }
+
+  const amount = prompt("Enter loan amount");
+  const collateral = prompt("Enter collateral amount");
+
+  const query = `
+    mutation {
+      insert_loans(objects: {
+        user_id: "${user.id}",
+        amount: ${amount},
+        collateral_amount: ${collateral},
+        status: "pending"
+      }) {
+        affected_rows
+      }
+    }
+  `;
+
+  await nhost.graphql.request(query);
+
+  alert("Loan request submitted");
+  location.reload();
+  }
+   </script>
 <script>
 async function submitWithdraw() {
-  const { data: { user } } = await supabase.auth.getUser();
+async function submitWithdraw() {
+
+  const user = nhost.auth.getUser();
+
+  if (!user) {
+    alert("Login first");
+    return;
+  }
 
   let method = document.getElementById("withdrawMethod").value;
 
   if (!method) {
-    alert("Select withdrawal method");
+    alert("Select method");
     return;
   }
 
-  let withdrawal = {
-    user_id: user.id,
-    method: method,
-    status: "Processing",
-    created_at: new Date().toISOString()
-  };
+  const query = `
+    mutation {
+      insert_transactions(objects: {
+        user_id: "${user.id}",
+        type: "withdraw",
+        amount: 0,
+        status: "pending"
+      }) {
+        affected_rows
+      }
+    }
+  `;
 
-  const { error } = await supabase
-    .from("withdrawals")
-    .insert([withdrawal]);
+  await nhost.graphql.request(query);
 
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
-  alert("Withdrawal submitted successfully");
+  alert("Withdrawal submitted");
 }
 
   // BANK
@@ -230,46 +266,48 @@ function addCollateral() {
 }
 </script>
  <script>
-function repayLoan() {
-  let data = JSON.parse(localStorage.getItem("quickbtcLoan"));
+async function repayLoan() {
 
-  if (!data) {
-    alert("No loan found");
-    return;
-  }
+  const query = `
+    mutation {
+      update_loans(
+        where: {},
+        _set: { status: "repaid" }
+      ) {
+        affected_rows
+      }
+    }
+  `;
 
-  if (data.status === "Paid") {
-    alert("Loan already repaid");
-    return;
-  }
+  await nhost.graphql.request(query);
 
-  // redirect to payment page
-  window.location.href = "repayment.html";
+  alert("Loan marked as repaid");
+  location.reload();
 }
 </script>
  
 <script>
-  function withdrawFunds() {
-  let data = JSON.parse(localStorage.getItem("quickbtcLoan"));
+  async function withdrawFunds() {
 
-  if (!data) {
-    alert("No loan available");
+  const query = `
+    query {
+      loans {
+        status
+      }
+    }
+  `;
+
+  const res = await nhost.graphql.request(query);
+  const loan = res.data.loans[0];
+
+  if (!loan || loan.status !== "approved") {
+    alert("Loan not approved yet");
     return;
   }
 
-  // allow withdrawal ONLY if loan exists and not pending
-  if (data.status === "Pending") {
-    alert("Loan is still pending approval");
-    return;
-  }
+  alert("Withdrawal request sent");
 
-  if (data.status === "Paid") {
-    alert("Loan already settled");
-    return;
-  }
-
-  // show form always for Approved OR Disbursed
-  document.getElementById("withdrawForm").style.display = "block";
+  // You can insert transaction here
 }
 </script>
 <script>
@@ -318,28 +356,51 @@ setInterval(loadBTC, 10000);
 </script>
   
   <script>async function loadLoan() {
-  const { data: { user } } = await supabase.auth.getUser();
 
-  const { data } = await supabase
-    .from("loans")
-    .select("*")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const query = `
+    query {
+      loans {
+        id
+        amount
+        collateral_amount
+        status
+      }
+    }
+  `;
 
-  if (!data) return;
+  const res = await nhost.graphql.request(query);
+  const loan = res.data.loans[0];
 
-  let loan = Number(data.loan_amount);
-  let interest = loan * 0.1;
+  if (!loan) {
+    document.getElementById("loanStatus").innerText = "No Loan Yet";
+    return;
+  }
 
-  document.getElementById("loanAmount").innerText = loan;
-  document.getElementById("collateralAmount").innerText = data.collateral;
+  let interest = loan.amount * 0.1;
+
+  document.getElementById("loanAmount").innerText = loan.amount;
+  document.getElementById("collateralAmount").innerText = loan.collateral_amount;
   document.getElementById("interestAmount").innerText = interest.toFixed(2);
-  document.getElementById("repayAmount").innerText = (loan + interest).toFixed(2);
-  document.getElementById("loanStatus").innerText = data.status;
+  document.getElementById("repayAmount").innerText = (loan.amount + interest).toFixed(2);
+  document.getElementById("loanStatus").innerText = loan.status;
 }
 
 loadLoan();
 </script>
+  <script>
+async function checkUser() {
+  const user = nhost.auth.getUser();
+
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  document.getElementById("userName").innerText = user.email;
+}
+
+checkUser();
+  </script>
  
 <script>
 let repaymentTime = parseInt(localStorage.getItem("repaymentTime"));
@@ -394,7 +455,7 @@ startTimer();
 </script>
 <script>
 async function loadUser() {
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = nhost.auth.getUser();
 
   if (!user) {
     window.location.href = "login.html";
@@ -407,25 +468,19 @@ async function loadUser() {
 loadUser();
 </script>
 <script>
-function logout() {
-  // remove user session data
-  localStorage.removeItem("quickbtcUser");
-  localStorage.removeItem("quickbtcLoan");
-  localStorage.removeItem("repaymentTime");
-
-  alert("You have been logged out");
-
-  // redirect to login or home page
-  window.location.href = "index.html";
+async function logout() {
+  await nhost.auth.signOut();
+  window.location.href = "login.html";
 }
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://unpkg.com/@nhost/nhost-js"></script>
 
 <script>
-const supabaseUrl = "https://dntcbbolfwkaalphxotw.supabase.co";
-const supabaseKey = "sb_publishable_Bc25pHX_aamO4fOfLh_D9w__kwNvMoo";
-
+const nhost = new Nhost.NhostClient({
+  subdomain: "YOUR_SUBDOMAIN",
+  region: "YOUR_REGION"
+});
 </script>
 </body>
 </html>
