@@ -48,25 +48,28 @@ async function register() {
   }
 
   try {
-    const result = await nhost.auth.signUp({
+
+    const { error, session, user } = await nhost.auth.signUp({
       email,
-      password
+      password,
+      options: {
+        displayName: name   // 👈 THIS IS WHERE IT GOES
+      }
     });
 
-    if (result.error) {
-      alert(result.error.message);
+    if (error) {
+      alert(error.message);
       return;
     }
 
     alert("Registration successful");
-
-    console.log(result);
+    console.log(user);
 
     window.location.href = "login.html";
 
   } catch (err) {
     console.error(err);
-    alert("Something went wrong. Check console.");
+    alert("Something went wrong");
   }
 }
 </script>
